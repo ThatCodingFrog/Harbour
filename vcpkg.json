@@ -1,0 +1,8 @@
+{
+    "name": "harbour",
+    "version": "0.1.0",
+    "builtin-baseline": "9fbeedd5a58b94bcde42eb5be12652c2f27e08cf",
+    "dependencies": [
+        "sdl2"
+    ]
+}

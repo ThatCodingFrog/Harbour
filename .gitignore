@@ -42,3 +42,10 @@
 
 # Editor files
 *.vs/
+
+# Building
+build/
+out/
+
+# vcpkg
+vcpkg/
