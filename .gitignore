@@ -49,3 +49,13 @@ out/
 
 # vcpkg
 vcpkg/
+vcpkg_installed/
+
+# Visual Studio build
+Harbour/
+
+#Exclude external/
+external/
+
+# CMakeFiles
+CMakeFiles/

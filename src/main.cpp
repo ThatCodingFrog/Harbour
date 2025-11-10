@@ -3,7 +3,9 @@
 //this current main was made by ChatGPT, as a launching point for me
 
 // main.cpp
-#include <SDL.h>
+#define SDL_MAIN_HANDLED
+
+#include <SDL2/SDL.h>
 #include <glad/glad.h>
 #include "imgui.h"
 #include "backends/imgui_impl_sdl2.h"
@@ -32,7 +34,7 @@ int main() {
         }
 
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame(window);
+        ImGui_ImplSDL2_NewFrame();
         ImGui::NewFrame();
 
         // --- Your first UI ---
@@ -53,4 +55,5 @@ int main() {
     ImGui::DestroyContext();
     SDL_DestroyWindow(window);
     SDL_Quit();
+    return 0;
 }
