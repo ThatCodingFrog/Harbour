@@ -1,3 +1,5 @@
+# Root CMakeLists.txt
+# Assisted by ChatGPT, because I'm a beginner to CMake
 
 cmake_minimum_required(VERSION 3.16)
 
@@ -18,21 +20,16 @@ find_package(SDL2 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(freetype CONFIG REQUIRED)
 
-add_executable(Harbour src/main.cpp)
+add_executable(Harbour
+    Harbour/src/main.cpp
+    Harbour/src/App.cpp
+)
+
+target_include_directories(Harbour PRIVATE Harbour/include)
 
 add_subdirectory(external/imgui)
 
 target_link_libraries(imgui PRIVATE freetype)
 
-get_directory_property(GLOBAL_DEFS COMPILE_DEFINITIONS)
-message(STATUS ">>> Global compile definitions: ${GLOBAL_DEFS}")
-
-get_target_property(IMGUI_DEFS imgui COMPILE_DEFINITIONS)
-message(STATUS ">>> ImGui compile definitions: ${IMGUI_DEFS}")
-
-
 target_link_libraries(Harbour PRIVATE SDL2::SDL2 glad::glad)
 target_link_libraries(Harbour PRIVATE imgui)
-
-get_target_property(IMGUI_SOURCES imgui SOURCES)
-message(STATUS ">>> ImGui source files: ${IMGUI_SOURCES}")
