@@ -9,7 +9,7 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_TOOLCHAIN_FILE}" CACHE STRING "Vcpkg toolchain file")
 endif()
 
-project(Harbour LANGUAGES CXX)
+project(Harbour VERSION 0.1.0 LANGUAGES CXX)
 
 add_compile_definitions(IMGUI_DISABLE_FREETYPE)
 
@@ -23,9 +23,11 @@ find_package(freetype CONFIG REQUIRED)
 add_executable(Harbour
     Harbour/src/main.cpp
     Harbour/src/App.cpp
-)
+    Harbour/src/GameCard.cpp
+    Harbour/src/utils/FileManager.cpp "Harbour/include/MenuScreen.h" "Harbour/src/MenuScreen.cpp" "Harbour/include/utils/LoadImage.h")
 
 target_include_directories(Harbour PRIVATE Harbour/include)
+target_include_directories(Harbour PRIVATE external/stb)
 
 add_subdirectory(external/imgui)
 
