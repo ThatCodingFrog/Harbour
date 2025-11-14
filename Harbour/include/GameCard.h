@@ -1,5 +1,6 @@
 #pragma once
 
+#include "utils/LoadImage.h"
 #include <string>
 
 namespace Harbour {
@@ -12,6 +13,8 @@ namespace Harbour {
 
 		std::string getName();
 		std::string getVersion();
+
+		void drawThumbnail(const char* filename);
 
 	private:
 		std::string m_name;

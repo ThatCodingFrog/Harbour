@@ -1,5 +1,4 @@
 #include "MenuScreen.h"
-#include "App.h"
 
 void HarbourGUI::MyLibaryScreen()
 {
@@ -21,5 +20,5 @@ void HarbourGUI::settingsScreen()
 
 void HarbourGUI::helpScreen()
 {
-
+	ImGui::Text("Help Center");
 }

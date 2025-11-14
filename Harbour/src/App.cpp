@@ -90,13 +90,7 @@ void Harbour::App::run()
             ImGui::EndMenuBar();
         }
 
-        int my_image_width = 0;
-        int my_image_height = 0;
-        GLuint my_image_texture = 0;
-        bool ret = LoadTextureFromFile("../../assets/shiptitle.darkmode.png", &my_image_texture, &my_image_width, &my_image_height);
-        IM_ASSERT(ret);
-        ImGui::Image((ImTextureID)(intptr_t)my_image_texture, ImVec2(my_image_width, my_image_height));
-
+        std::cout << m_library[0].getName();
 
         this->drawCurrentScreen();
 

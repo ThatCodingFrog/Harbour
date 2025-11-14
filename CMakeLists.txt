@@ -24,7 +24,7 @@ add_executable(Harbour
     Harbour/src/main.cpp
     Harbour/src/App.cpp
     Harbour/src/GameCard.cpp
-    Harbour/src/utils/FileManager.cpp "Harbour/include/MenuScreen.h" "Harbour/src/MenuScreen.cpp" "Harbour/include/utils/LoadImage.h")
+    Harbour/src/utils/FileManager.cpp "Harbour/include/MenuScreen.h" "Harbour/src/MenuScreen.cpp" "Harbour/include/utils/LoadImage.h" "Harbour/src/utils/LoadImage.cpp")
 
 target_include_directories(Harbour PRIVATE Harbour/include)
 target_include_directories(Harbour PRIVATE external/stb)
