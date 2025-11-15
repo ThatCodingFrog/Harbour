@@ -1,3 +1,8 @@
+/*
+* The basis for the App::init(), App::run(), and App::shutdown() came from ChatGPT, but pieces of it have been modified by me (ThatCodingFrog)
+*/
+
+
 #include "App.h"
 #include <iostream>
 

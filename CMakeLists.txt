@@ -1,5 +1,6 @@
 # Root CMakeLists.txt
 # Assisted by ChatGPT, because I'm a beginner to CMake
+# Also assisted by Search Assist
 
 cmake_minimum_required(VERSION 3.16)
 
@@ -28,6 +29,7 @@ add_executable(Harbour
 
 target_include_directories(Harbour PRIVATE Harbour/include)
 target_include_directories(Harbour PRIVATE external/stb)
+target_include_directories(Harbour PRIVATE external)
 
 add_subdirectory(external/imgui)
 
@@ -35,3 +37,14 @@ target_link_libraries(imgui PRIVATE freetype)
 
 target_link_libraries(Harbour PRIVATE SDL2::SDL2 glad::glad)
 target_link_libraries(Harbour PRIVATE imgui)
+
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${PROJECT_NAME}>/library
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_CURRENT_SOURCE_DIR}/Harbour/allGames.json
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/library/allGames.json
+)
+
+add_custom_target(AlwaysCopy ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/library/allGames.json)
+
