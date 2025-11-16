@@ -46,5 +46,12 @@ add_custom_command(
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/library/allGames.json
 )
 
-add_custom_target(AlwaysCopy ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/library/allGames.json)
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E copy_directory
+            ${CMAKE_CURRENT_SOURCE_DIR}/assets
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/assets
+)
+
+# add_custom_target(AlwaysCopy ALL DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/library/allGames.json)
 

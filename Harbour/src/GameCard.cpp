@@ -32,16 +32,19 @@ void Harbour::GameCard::setVersion(std::string version)
 void Harbour::GameCard::setFilePath()
 {
 	if (m_name == "Ship of Harkinian") {
-		m_thumbnailFilePath = "../../assets/ShipTitle.png";
+		m_thumbnailFilePath = "./assets/ShipTitle.png";
 	}
 	else if(m_name == "2 Ship 2 Harkinian") {
-		m_thumbnailFilePath = "../../assets/2ShipTitle.png";
+		m_thumbnailFilePath = "./assets/2ShipTitle.png";
 	}
 	else if (m_name == "Starship") {
-		m_thumbnailFilePath = "../../assets/StarShipTitle.png";
+		m_thumbnailFilePath = "./assets/StarShipTitle.png";
+	}
+	else if(m_name == "Spaghetti Kart") {
+		m_thumbnailFilePath = "./assets/SpaghettiKartTitle.png";
 	}
 	else {
-		m_thumbnailFilePath = "";
+		m_thumbnailFilePath = "./assets/UnknownTitle.png";
 	}
 }
 
