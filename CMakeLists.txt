@@ -12,8 +12,6 @@ endif()
 
 project(Harbour VERSION 0.1.0 LANGUAGES CXX)
 
-add_compile_definitions(IMGUI_DISABLE_FREETYPE)
-
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 

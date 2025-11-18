@@ -51,8 +51,11 @@ out/
 vcpkg/
 vcpkg_installed/
 
-#Exclude external/
-external/
+# Exclude external/ 
+nlohmann/
+stb/
+# external/
+
 
 # CMakeFiles
 CMakeFiles/
