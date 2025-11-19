@@ -33,7 +33,7 @@ void Harbour::App::init()
     ImGui::CreateContext();
 
     ImGuiIO& io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF("../../external/imgui/misc/fonts/Karla-Regular.ttf", 16.0f);
+    //io.Fonts->AddFontFromFileTTF("../../external/imgui/misc/fonts/Karla-Regular.ttf", 16.0f);
 
     ImGui_ImplSDL2_InitForOpenGL(m_window, gl_context);
     ImGui_ImplOpenGL3_Init("#version 150");

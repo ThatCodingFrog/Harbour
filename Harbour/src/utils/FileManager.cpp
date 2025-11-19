@@ -1,4 +1,5 @@
 #include "utils/FileManager.h"
+#include <vector>
 
 void HarbourUtils::FileManager::createNewDirectory(std::string dir)
 {
