@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.16)
 set(VCPKG_ROOT "${CMAKE_CURRENT_SOURCE_DIR}/external/vcpkg")
 
 # If vcpkg folder doesn't exist, clone and bootstrap it
-if(NOT EXISTS "${VCPKG_ROOT}/vcpkg.exe")
+if(NOT EXISTS "${VCPKG_ROOT}/.vcpkg-root")
     message(STATUS "vcpkg not found — cloning into external/vcpkg...")
 
     # Clone vcpkg
