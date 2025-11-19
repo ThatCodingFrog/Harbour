@@ -53,7 +53,7 @@ vcpkg_installed/
 
 # Exclude external/ 
 nlohmann/
-stb/
+# stb/
 # external/
 
 
