@@ -1,11 +1,9 @@
 #pragma once
 
 #include "imgui.h"
-#include "App.h"
+#include <vector>
+#include "GameCard.h"
 
-namespace Harbour {
-	class App;
-}
 
 namespace HarbourGUI {
 	enum screenID {
@@ -15,7 +13,7 @@ namespace HarbourGUI {
 		HelpCenter,
 	};
 
-	void MyLibraryScreen(Harbour::App& instance);
+	void MyLibraryScreen(std::vector<Harbour::GameCard>& myLibrary);
 	void downloadsScreen();
 	void settingsScreen();
 	void helpScreen();

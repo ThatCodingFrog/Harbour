@@ -120,7 +120,7 @@ void Harbour::App::drawCurrentScreen()
     switch (m_screenID) {
     case HarbourGUI::MyLibrary:
     {
-        HarbourGUI::MyLibraryScreen(*this);
+        HarbourGUI::MyLibraryScreen(m_library);
         break;
     }
     case HarbourGUI::AllGames:
@@ -139,7 +139,7 @@ void Harbour::App::drawCurrentScreen()
         break;
     }
     default:
-        HarbourGUI::MyLibraryScreen(*this);
+        HarbourGUI::MyLibraryScreen(m_library);
     }
 }
 
@@ -152,3 +152,4 @@ void Harbour::App::constructLibraryFromJSON()
         m_library.emplace_back(res[i].at("name"), res[i].at("version"));
     }
 }
+

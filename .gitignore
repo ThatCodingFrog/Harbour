@@ -54,6 +54,5 @@ vcpkg_installed/
 # Exclude assets/ 
 assets/
 
-
 # CMakeFiles
 CMakeFiles/

@@ -1,12 +1,15 @@
 #include "MenuScreen.h"
+#include "GameCard.h"
 
-void HarbourGUI::MyLibraryScreen(Harbour::App& instance)
+//MyLibraryScreen helped by AI in deciding the parameters after
+//ThatCodingFrog thought of the idea of how to pass data
+void HarbourGUI::MyLibraryScreen(std::vector<Harbour::GameCard>& myLibrary)
 {
 	ImGui::PushFont(NULL, 24.0f);
 	ImGui::Text("My Library");
 
-	for (size_t i = 0; i < instance.m_library.size(); i++) {
-		instance.m_library[i].drawThumbnail();
+	for (size_t i = 0; i < myLibrary.size(); i++) {
+		myLibrary[i].drawThumbnail();
 	}
 	ImGui::PopFont();
 

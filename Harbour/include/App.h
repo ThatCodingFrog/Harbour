@@ -34,11 +34,9 @@ namespace Harbour {
 		std::vector<GameCard> m_library = {};
 
 		int m_screenID = 0;
-		friend void HarbourGUI::MyLibraryScreen(Harbour::App& instance);
 
 	private:
 		HarbourUtils::FileManager m_fileManager = {};
-
 		void constructLibraryFromJSON();
 
 	};

@@ -24,7 +24,12 @@ add_executable(Harbour
     Harbour/src/main.cpp
     Harbour/src/App.cpp
     Harbour/src/GameCard.cpp
-    Harbour/src/utils/FileManager.cpp "Harbour/include/MenuScreen.h" "Harbour/src/MenuScreen.cpp" "Harbour/include/utils/LoadImage.h" "Harbour/src/utils/LoadImage.cpp")
+    Harbour/src/utils/FileManager.cpp 
+    Harbour/include/MenuScreen.h
+    Harbour/src/MenuScreen.cpp
+    Harbour/include/utils/LoadImage.h
+    Harbour/src/utils/LoadImage.cpp
+)
 
 target_include_directories(Harbour PRIVATE 
     Harbour/include
@@ -45,6 +50,7 @@ add_custom_command(
             ${CMAKE_CURRENT_SOURCE_DIR}/Harbour/allGames.json
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/library/allGames.json
 )
+
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
