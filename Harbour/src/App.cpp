@@ -11,7 +11,8 @@
 Harbour::App::App()
 {
 	this->init();
-    this->m_library.emplace_back();
+    this->constructLibraryFromJSON();
+    //this->m_library.emplace_back("Ship of Harkinian", "9.0.5");
 }
 
 Harbour::App::~App()
@@ -33,7 +34,7 @@ void Harbour::App::init()
     ImGui::CreateContext();
 
     ImGuiIO& io = ImGui::GetIO();
-    //io.Fonts->AddFontFromFileTTF("../../external/imgui/misc/fonts/Karla-Regular.ttf", 16.0f);
+    io.Fonts->AddFontFromFileTTF("./assets/Fonts/montserrat/Montserrat-Regular.otf", 16.0f);
 
     ImGui_ImplSDL2_InitForOpenGL(m_window, gl_context);
     ImGui_ImplOpenGL3_Init("#version 150");
@@ -95,8 +96,6 @@ void Harbour::App::run()
             ImGui::EndMenuBar();
         }
 
-        std::cout << m_library[0].getName();
-
         this->drawCurrentScreen();
 
         ImGui::End();
@@ -121,7 +120,7 @@ void Harbour::App::drawCurrentScreen()
     switch (m_screenID) {
     case HarbourGUI::MyLibrary:
     {
-        HarbourGUI::MyLibaryScreen();
+        HarbourGUI::MyLibraryScreen(*this);
         break;
     }
     case HarbourGUI::AllGames:
@@ -140,6 +139,16 @@ void Harbour::App::drawCurrentScreen()
         break;
     }
     default:
-        HarbourGUI::MyLibaryScreen();
+        HarbourGUI::MyLibraryScreen(*this);
+    }
+}
+
+void Harbour::App::constructLibraryFromJSON()
+{
+    auto res = m_fileManager.readJSON("library/allGames.json");
+
+    for (int i = 0; i < res.size(); i++) {
+        std::cout << res[i].at("name") << std::endl << res[i].at("version") << std::endl;
+        m_library.emplace_back(res[i].at("name"), res[i].at("version"));
     }
 }

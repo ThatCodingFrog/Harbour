@@ -26,3 +26,14 @@ std::string HarbourUtils::FileManager::readFile(std::string file)
 	return result;
 
 }
+
+nlohmann::json HarbourUtils::FileManager::readJSON(std::string file)
+{
+	//minimalistic function assisted by Brave Search Assist
+
+	std::ifstream stream(file);
+	nlohmann::json j = {};
+	stream >> j;
+
+	return j;
+}

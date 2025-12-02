@@ -2,7 +2,7 @@
 #include <filesystem>
 #include <fstream>
 #include <string>
-//#include <nlohmann/json.hpp>
+#include <nlohmann/json.hpp>
 
 //#include <curl/curl.h>
 
@@ -13,6 +13,6 @@ namespace HarbourUtils {
 		void writeFile(std::string file, std::string data);
 		std::string readFile(std::string file);
 
-		//nlohmann::json readJSON(std::string file);
+		nlohmann::json readJSON(std::string file);
 	};
 }
