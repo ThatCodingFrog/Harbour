@@ -44,6 +44,9 @@ target_link_libraries(imgui PRIVATE freetype)
 target_link_libraries(Harbour PRIVATE SDL2::SDL2 glad::glad CURL::libcurl)
 target_link_libraries(Harbour PRIVATE imgui)
 
+add_subdirectory(external/11Zip)
+target_link_libraries(Harbour PRIVATE elzip)
+
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
     COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${PROJECT_NAME}>/library
