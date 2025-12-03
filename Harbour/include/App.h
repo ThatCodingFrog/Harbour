@@ -37,7 +37,7 @@ namespace Harbour {
 
 	private:
 		HarbourUtils::FileManager m_fileManager = {};
-		void constructLibraryFromJSON();
+		void constructLibraryFromJSON(const std::string lib = "library/myGames.json");
 
 	};
 }

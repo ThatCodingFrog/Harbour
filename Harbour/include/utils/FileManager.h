@@ -3,8 +3,7 @@
 #include <fstream>
 #include <string>
 #include <nlohmann/json.hpp>
-
-//#include <curl/curl.h>
+#include <curl/curl.h>
 
 namespace HarbourUtils {
 	class FileManager {
@@ -14,5 +13,6 @@ namespace HarbourUtils {
 		std::string readFile(std::string file);
 
 		nlohmann::json readJSON(std::string file);
+		int makeCURLRequest(const char* url);
 	};
 }

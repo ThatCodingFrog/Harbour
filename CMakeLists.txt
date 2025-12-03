@@ -19,6 +19,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 find_package(SDL2 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(freetype CONFIG REQUIRED)
+find_package(CURL CONFIG REQUIRED)
 
 add_executable(Harbour
     Harbour/src/main.cpp
@@ -40,7 +41,7 @@ add_subdirectory(external/imgui)
 
 target_link_libraries(imgui PRIVATE freetype)
 
-target_link_libraries(Harbour PRIVATE SDL2::SDL2 glad::glad)
+target_link_libraries(Harbour PRIVATE SDL2::SDL2 glad::glad CURL::libcurl)
 target_link_libraries(Harbour PRIVATE imgui)
 
 add_custom_command(

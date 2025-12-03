@@ -32,16 +32,16 @@ void Harbour::GameCard::setVersion(std::string version)
 void Harbour::GameCard::setFilePath()
 {
 	if (m_name == "Ship of Harkinian") {
-		m_thumbnailFilePath = "./assets/GameCard/ShipTitle.png";
+		m_thumbnailFilePath = "./assets/GameCard/ShipTitleResized.png";
 	}
 	else if(m_name == "2 Ship 2 Harkinian") {
-		m_thumbnailFilePath = "./assets/GameCard/2ShipTitle.png";
+		m_thumbnailFilePath = "./assets/GameCard/2ShipTitleResized.png";
 	}
 	else if (m_name == "Starship") {
-		m_thumbnailFilePath = "./assets/GameCard/StarShipTitle.png";
+		m_thumbnailFilePath = "./assets/GameCard/StarShipTitleResized.png";
 	}
 	else if(m_name == "Spaghetti Kart") {
-		m_thumbnailFilePath = "./assets/GameCard/SpaghettiKartTitle.png";
+		m_thumbnailFilePath = "./assets/GameCard/SpaghettiKartTitleResized.png";
 	}
 	else {
 		m_thumbnailFilePath = "./assets/GameCard/UnknownTitle.png";
@@ -57,12 +57,26 @@ std::string Harbour::GameCard::getVersion()
 	return m_version;
 }
 
+void Harbour::GameCard::draw()
+{
+	ImGui::SetNextWindowSize(ImVec2(300, 300));
+	ImGui::BeginChild(m_name.c_str(), ImVec2(0, 0),
+		ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY | ImGuiChildFlags_Border,
+		ImGuiWindowFlags_NoMove
+	);
+
+	this->drawThumbnail();
+
+	ImGui::EndChild();
+}
+
 void Harbour::GameCard::drawThumbnail()
 {
+	//From ImGui docs by ocornut
 	int my_image_width = 0;
 	int my_image_height = 0;
 	GLuint my_image_texture = 0;
 	bool ret = LoadTextureFromFile(m_thumbnailFilePath, &my_image_texture, &my_image_width, &my_image_height);
 	IM_ASSERT(ret);
-	ImGui::Image((ImTextureID)(intptr_t)my_image_texture, ImVec2(my_image_width, my_image_height));
+	ImGui::Image((ImTextureID)(intptr_t)my_image_texture, ImVec2(256, 256)); //ImVec2(my_image_width, my_image_height)
 }

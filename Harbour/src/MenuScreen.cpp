@@ -8,9 +8,13 @@ void HarbourGUI::MyLibraryScreen(std::vector<Harbour::GameCard>& myLibrary)
 	ImGui::PushFont(NULL, 24.0f);
 	ImGui::Text("My Library");
 
-	for (size_t i = 0; i < myLibrary.size(); i++) {
-		myLibrary[i].drawThumbnail();
+	if (myLibrary.size() > 0) {
+		for (size_t i = 0; i < myLibrary.size(); i++) {
+			myLibrary[i].draw();
+		}
 	}
+	else
+		ImGui::Text("No games installed yet.");
 	ImGui::PopFont();
 
 }

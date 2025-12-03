@@ -51,8 +51,8 @@ out/
 vcpkg/
 vcpkg_installed/
 
-# Exclude assets/ 
-assets/
-
 # CMakeFiles
 CMakeFiles/
+
+# Add cleanup of assets once font is decided better
+# Add cleanup of 11Zip as well, later

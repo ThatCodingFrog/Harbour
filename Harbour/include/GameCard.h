@@ -12,12 +12,14 @@ namespace Harbour {
 		std::string getName();
 		std::string getVersion();
 
-		void drawThumbnail();
-
+		void draw();
+		
 	private:
 		void setName(std::string name);
 		void setVersion(std::string version);
 		void setFilePath();
+
+		void drawThumbnail();
 
 		std::string m_name;
 		std::string m_version;

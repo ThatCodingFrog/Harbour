@@ -12,7 +12,8 @@ Harbour::App::App()
 {
 	this->init();
     this->constructLibraryFromJSON();
-    //this->m_library.emplace_back("Ship of Harkinian", "9.0.5");
+
+    m_fileManager.makeCURLRequest("https://api.github.com/repos/HarbourMasters/2Ship2Harkinian/releases/latest");
 }
 
 Harbour::App::~App()
@@ -64,6 +65,7 @@ void Harbour::App::run()
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+        
         ImGui::Begin("MainOverlay", nullptr,
             ImGuiWindowFlags_NoDecoration |
             ImGuiWindowFlags_NoBackground |
@@ -143,9 +145,9 @@ void Harbour::App::drawCurrentScreen()
     }
 }
 
-void Harbour::App::constructLibraryFromJSON()
+void Harbour::App::constructLibraryFromJSON(const std::string lib)
 {
-    auto res = m_fileManager.readJSON("library/allGames.json");
+    auto res = m_fileManager.readJSON(lib);
 
     for (int i = 0; i < res.size(); i++) {
         std::cout << res[i].at("name") << std::endl << res[i].at("version") << std::endl;
