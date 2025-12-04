@@ -11,9 +11,14 @@
 Harbour::App::App()
 {
 	this->init();
-    this->constructLibraryFromJSON();
+    this->constructLibraryFromJSON(m_library, "library/myGames.json");
+    this->constructLibraryFromJSON(m_allGames, "library/allGames.json");
 
-    m_fileManager.makeCURLRequest("https://api.github.com/repos/HarbourMasters/2Ship2Harkinian/releases/latest");
+    for (size_t i = 0; i < m_allGames.size(); i++) {
+        std::cout << "m_allGames " << m_allGames[i].getName() << " " << m_allGames[i].getVersion();
+    }
+    
+    m_fileManager.checkLatestVersions();
 }
 
 Harbour::App::~App()
@@ -127,7 +132,7 @@ void Harbour::App::drawCurrentScreen()
     }
     case HarbourGUI::AllGames:
     {
-        HarbourGUI::downloadsScreen();
+        HarbourGUI::downloadsScreen(m_allGames);
         break;
     }
     case HarbourGUI::Settings:
@@ -145,13 +150,13 @@ void Harbour::App::drawCurrentScreen()
     }
 }
 
-void Harbour::App::constructLibraryFromJSON(const std::string lib)
+void Harbour::App::constructLibraryFromJSON(std::vector<GameCard>& output, std::string lib)
 {
     auto res = m_fileManager.readJSON(lib);
 
-    for (int i = 0; i < res.size(); i++) {
+    for (size_t i = 0; i < res.size(); i++) {
         std::cout << res[i].at("name") << std::endl << res[i].at("version") << std::endl;
-        m_library.emplace_back(res[i].at("name"), res[i].at("version"));
+        output.emplace_back(res[i].at("name"), res[i].at("version"));
     }
 }
 

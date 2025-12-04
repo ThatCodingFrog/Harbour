@@ -49,7 +49,7 @@ static size_t WriteCallback(void* contents, size_t size, size_t nmemb, std::stri
     return totalSize;
 }
 
-int HarbourUtils::FileManager::makeCURLRequest(const char* url)
+std::string HarbourUtils::FileManager::makeCURLRequest(const char* url)
 {
     CURL* curl = curl_easy_init();
     std::string response;
@@ -69,7 +69,7 @@ int HarbourUtils::FileManager::makeCURLRequest(const char* url)
         CURLcode res = curl_easy_perform(curl);
 
         if (res == CURLE_OK) {
-            std::cout << "Response: " << response << std::endl;
+            //std::cout << "Response: " << response << std::endl;
         }
         else {
             std::cerr << "Request failed: " << curl_easy_strerror(res) << std::endl;
@@ -78,5 +78,37 @@ int HarbourUtils::FileManager::makeCURLRequest(const char* url)
         curl_easy_cleanup(curl);
     }
 
-    return 0;
+    return response;
+}
+
+void HarbourUtils::FileManager::checkLatestVersions()
+{
+    //Get/check install links for versions based on version
+#if defined(_WIN32)
+    auto latest = this->checkShipVersion();
+    auto installed = this->readJSON("library/myGames.json");
+
+
+#elif defined(__linux__)
+
+#elif defined(__APPLE__)
+#endif
+}
+
+nlohmann::json HarbourUtils::FileManager::checkShipVersion()
+{
+    nlohmann::json ship = nlohmann::json::parse( makeCURLRequest("https://api.github.com/repos/HarbourMasters/Shipwright/releases/latest") );
+    //std::cout << ship << std::endl;
+    return ship;
+}
+
+nlohmann::json HarbourUtils::FileManager::check2ShipVersion()
+{
+    this->makeCURLRequest("https://api.github.com/repos/HarbourMasters/2Ship2Harkinian/releases/latest");
+    return nlohmann::json();
+}
+
+nlohmann::json HarbourUtils::FileManager::checkStarShipVersion()
+{
+    return nlohmann::json();
 }

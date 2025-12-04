@@ -14,7 +14,7 @@ namespace HarbourGUI {
 	};
 
 	void MyLibraryScreen(std::vector<Harbour::GameCard>& myLibrary);
-	void downloadsScreen();
+	void downloadsScreen(std::vector<Harbour::GameCard>& downloads);
 	void settingsScreen();
 	void helpScreen();
 }

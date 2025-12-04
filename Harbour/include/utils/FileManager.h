@@ -13,6 +13,13 @@ namespace HarbourUtils {
 		std::string readFile(std::string file);
 
 		nlohmann::json readJSON(std::string file);
-		int makeCURLRequest(const char* url);
+		std::string makeCURLRequest(const char* url);
+
+		void checkLatestVersions();
+
+	private:
+		nlohmann::json checkShipVersion();
+		nlohmann::json check2ShipVersion();
+		nlohmann::json checkStarShipVersion();
 	};
 }

@@ -22,17 +22,7 @@
     {
         "name": "Starship",
         "alternate-name": "StarFox 64 PC port",
-        "version": "2.0.0",
-        "download-url": {
-            "Win32": "",
-            "Linux": "",
-            "MacOS": ""
-        }
-    },
-    {
-        "name": "Spaghetti Kart",
-        "alternate-name": "Mario Kart 64 PC port",
-        "version": "0.9.9.1",
+        "version": "v2.0.0",
         "download-url": {
             "Win32": "",
             "Linux": "",

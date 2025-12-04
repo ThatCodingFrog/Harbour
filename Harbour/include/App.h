@@ -32,12 +32,13 @@ namespace Harbour {
 		SDL_Window* m_window = nullptr;
 		bool m_isRunning = true;
 		std::vector<GameCard> m_library = {};
+		std::vector<GameCard> m_allGames = {};
 
 		int m_screenID = 0;
 
 	private:
 		HarbourUtils::FileManager m_fileManager = {};
-		void constructLibraryFromJSON(const std::string lib = "library/myGames.json");
+		void constructLibraryFromJSON(std::vector<GameCard>& output, std::string lib);
 
 	};
 }

@@ -19,19 +19,33 @@ void HarbourGUI::MyLibraryScreen(std::vector<Harbour::GameCard>& myLibrary)
 
 }
 
-void HarbourGUI::downloadsScreen()
+void HarbourGUI::downloadsScreen(std::vector<Harbour::GameCard>& downloads)
 {
+	ImGui::PushFont(NULL, 24.0f);
 	ImGui::Text("All Games");
+	for (size_t i = 0; i < downloads.size(); i++) {
+		downloads[i].draw();
+	}
+
+	ImGui::PopFont();
 
 	//Read data from allGames.json, then run loop based on results to draw thumbnails w/ download buttons
 }
 
 void HarbourGUI::settingsScreen()
 {
+	ImGui::PushFont(NULL, 24.0f);
 	ImGui::Text("Settings");
+	ImGui::PopFont();
+
+	ImGui::Text("Coming soon...");
 }
 
 void HarbourGUI::helpScreen()
 {
+	ImGui::PushFont(NULL, 24.0f);
 	ImGui::Text("Help Center");
+	ImGui::PopFont();
+
+	ImGui::Text("Coming soon...");
 }

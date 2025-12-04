@@ -66,6 +66,8 @@ void Harbour::GameCard::draw()
 	);
 
 	this->drawThumbnail();
+	ImGui::Text(m_name.c_str());
+
 
 	ImGui::EndChild();
 }
