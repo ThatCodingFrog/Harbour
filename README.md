@@ -8,6 +8,7 @@ This is a in-progress library + launcher for games made by HarbourMasters, built
 All you have to do is download the executable for your operating system. From there, you can automatically download, update, and launch your favorite HarbourMasters' games.
 
 # Planned/potential includes:
+- SpaghettiKart (once it is officially released)
 - Ocarina of Time x Majora's Mask Randomizer
 - Romhack Support
 
