@@ -55,6 +55,13 @@ add_custom_command(
             $<TARGET_FILE_DIR:${PROJECT_NAME}>/library/allGames.json
 )
 
+add_custom_command(
+    TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND ${CMAKE_COMMAND} -E make_directory $<TARGET_FILE_DIR:${PROJECT_NAME}>/library
+    COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            ${CMAKE_CURRENT_SOURCE_DIR}/Harbour/myGames.json
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>/library/myGames.json
+)
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD
