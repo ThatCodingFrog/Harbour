@@ -13,10 +13,6 @@ Harbour::App::App()
 	this->init();
     this->constructLibraryFromJSON(m_library, "library/myGames.json");
     this->constructLibraryFromJSON(m_allGames, "library/allGames.json");
-
-    for (size_t i = 0; i < m_allGames.size(); i++) {
-        std::cout << "m_allGames " << m_allGames[i].getName() << " " << m_allGames[i].getVersion();
-    }
     
     m_fileManager.checkLatestVersions();
 }
@@ -153,6 +149,8 @@ void Harbour::App::drawCurrentScreen()
 void Harbour::App::constructLibraryFromJSON(std::vector<GameCard>& output, std::string lib)
 {
     auto res = m_fileManager.readJSON(lib);
+
+    if (res.size() == 0) return;
 
     for (size_t i = 0; i < res.size(); i++) {
         std::cout << res[i].at("name") << std::endl << res[i].at("version") << std::endl;
