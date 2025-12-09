@@ -9,7 +9,9 @@
 
 Powershell instructions
 
-```powershell
+```
+# When cloning, be sure to set the --recursive flag for submodule dependencies
+
 # In the root folder, i.e. Harbour/, run:
 
 cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="external/vcpkg/scripts/buildsystems/vcpkg.cmake"
