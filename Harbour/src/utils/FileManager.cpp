@@ -104,11 +104,12 @@ nlohmann::json HarbourUtils::FileManager::checkShipVersion()
 
 nlohmann::json HarbourUtils::FileManager::check2ShipVersion()
 {
-    this->makeCURLRequest("https://api.github.com/repos/HarbourMasters/2Ship2Harkinian/releases/latest");
-    return nlohmann::json();
+    nlohmann::json ship2 = nlohmann::json::parse ( makeCURLRequest("https://api.github.com/repos/HarbourMasters/2Ship2Harkinian/releases/latest") );
+    return ship2;
 }
 
 nlohmann::json HarbourUtils::FileManager::checkStarShipVersion()
 {
-    return nlohmann::json();
+    nlohmann::json starship = nlohmann::json::parse(makeCURLRequest("https://api.github.com/repos/HarbourMasters/2Ship2Harkinian/releases/latest"));
+    return starship;
 }
