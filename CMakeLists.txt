@@ -44,8 +44,9 @@ target_link_libraries(imgui PRIVATE freetype)
 target_link_libraries(Harbour PRIVATE SDL2::SDL2 glad::glad CURL::libcurl)
 target_link_libraries(Harbour PRIVATE imgui)
 
-add_subdirectory(external/11Zip)
-target_link_libraries(Harbour PRIVATE elzip)
+# add_subdirectory(external/11Zip)
+# set_property(TARGET minizip PROPERTY INTERFACE_LINK_DIRECTORIES "")
+# target_link_libraries(Harbour PRIVATE elzip)
 
 add_custom_command(
     TARGET ${PROJECT_NAME} POST_BUILD

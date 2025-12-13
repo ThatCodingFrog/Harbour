@@ -21,8 +21,12 @@ void HarbourGUI::MyLibraryScreen(std::vector<Harbour::GameCard>& myLibrary)
 
 void HarbourGUI::downloadsScreen(std::vector<Harbour::GameCard>& downloads)
 {
+	//Create downloads vector here so it doesn't have to be passed as a param
 	ImGui::PushFont(NULL, 24.0f);
 	ImGui::Text("All Games");
+
+	if (downloads.size() == 0) return; //*Should* never be called, but better to have a failsafe
+
 	for (size_t i = 0; i < downloads.size(); i++) {
 		downloads[i].draw();
 	}

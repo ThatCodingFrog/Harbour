@@ -8,7 +8,8 @@ namespace Harbour {
 	public:
 		GameCard();
 		GameCard(std::string name, std::string version);
-		
+		~GameCard();
+
 		std::string getName();
 		std::string getVersion();
 
@@ -25,6 +26,7 @@ namespace Harbour {
 		std::string m_version;
 		const char* m_thumbnailFilePath = nullptr;
 
+		GLuint m_texture = 0;
 	};
 
 }

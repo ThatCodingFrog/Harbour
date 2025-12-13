@@ -8,7 +8,6 @@ Harbour::GameCard::GameCard()
 	this->setName("Unknown Card");
 	this->setVersion("1.0.0");
 	this->setFilePath();
-	
 }
 
 Harbour::GameCard::GameCard(std::string name, std::string version)
@@ -17,6 +16,13 @@ Harbour::GameCard::GameCard(std::string name, std::string version)
 	this->setName(name);
 	this->setVersion(version);
 	this->setFilePath();
+}
+
+Harbour::GameCard::~GameCard()
+{
+	if (m_texture != 0) {
+		glDeleteTextures(1, &m_texture);
+	}
 }
 
 void Harbour::GameCard::setName(std::string name)
@@ -31,6 +37,7 @@ void Harbour::GameCard::setVersion(std::string version)
 
 void Harbour::GameCard::setFilePath()
 {
+	//Later, this can be cleaned up and dependent on data from JSON
 	if (m_name == "Ship of Harkinian") {
 		m_thumbnailFilePath = "./assets/GameCard/ShipTitleResized.png";
 	}
@@ -68,17 +75,18 @@ void Harbour::GameCard::draw()
 	this->drawThumbnail();
 	ImGui::Text(m_name.c_str());
 
-
 	ImGui::EndChild();
 }
 
 void Harbour::GameCard::drawThumbnail()
-{
-	//From ImGui docs by ocornut
-	int my_image_width = 0;
-	int my_image_height = 0;
-	GLuint my_image_texture = 0;
-	bool ret = LoadTextureFromFile(m_thumbnailFilePath, &my_image_texture, &my_image_width, &my_image_height);
-	IM_ASSERT(ret);
-	ImGui::Image((ImTextureID)(intptr_t)my_image_texture, ImVec2(256, 256)); //ImVec2(my_image_width, my_image_height)
+{	
+	if (!m_texture) {
+		//From ImGui docs by ocornut
+		int my_image_width = 0;
+		int my_image_height = 0;
+		bool ret = LoadTextureFromFile(m_thumbnailFilePath, &m_texture, &my_image_width, &my_image_height);
+		IM_ASSERT(ret);
+	}
+
+	ImGui::Image((ImTextureID)(intptr_t)m_texture, ImVec2(256, 256)); //ImVec2(my_image_width, my_image_height)
 }
