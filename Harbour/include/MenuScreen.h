@@ -6,7 +6,7 @@
 
 
 namespace HarbourGUI {
-	enum screenID {
+	const enum screenID {
 		MyLibrary,
 		AllGames,
 		Settings,
@@ -17,4 +17,14 @@ namespace HarbourGUI {
 	void downloadsScreen(std::vector<Harbour::GameCard>& downloads);
 	void settingsScreen();
 	void helpScreen();
+
+	const enum Colors {
+		BlueGray,
+		DarkBlue,
+		LightBlue,
+		Green,
+		Teal,
+		Red,
+		Gray
+	};
 }
