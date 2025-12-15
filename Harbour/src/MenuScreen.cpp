@@ -53,3 +53,16 @@ void HarbourGUI::helpScreen()
 
 	ImGui::Text("Coming soon...");
 }
+
+ImVec4 HarbourGUI::getColor(Colors color)
+{
+	ImVec4 i = {};
+	switch (color) {
+	case BlueGray:
+		i = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
+		break;
+	default:
+		i = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
+	}
+	return i;
+}
