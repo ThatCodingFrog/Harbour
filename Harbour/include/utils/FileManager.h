@@ -4,6 +4,7 @@
 #include <string>
 #include <nlohmann/json.hpp>
 #include <curl/curl.h>
+#include "GameCard.h"
 
 namespace HarbourUtils {
 	class FileManager {
@@ -15,7 +16,10 @@ namespace HarbourUtils {
 		nlohmann::json readJSON(std::string file);
 		std::string makeCURLRequest(const char* url);
 
+		void constructLibraryFromJSON(std::vector<Harbour::GameCard>& output, std::string lib);
+
 		void checkLatestVersions();
+
 
 	private:
 		nlohmann::json checkShipVersion();

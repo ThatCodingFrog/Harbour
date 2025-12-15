@@ -38,7 +38,6 @@ namespace Harbour {
 
 	private:
 		HarbourUtils::FileManager m_fileManager = {};
-		void constructLibraryFromJSON(std::vector<GameCard>& output, std::string lib);
 
 	};
 }
