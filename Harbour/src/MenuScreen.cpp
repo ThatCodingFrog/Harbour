@@ -1,3 +1,4 @@
+#include <imgui.h>
 #include "MenuScreen.h"
 #include "GameCard.h"
 
@@ -42,6 +43,11 @@ void HarbourGUI::settingsScreen()
 	ImGui::Text("Settings");
 	ImGui::PopFont();
 
+	const char* schemes[] = { "Blue Gray", "Dark Blue" };
+	int current = 1;
+
+	ImGui::Combo("Color Schemes", &current, "Blue Gray\0Dark Blue", 4);
+
 	ImGui::Text("Coming soon...");
 }
 
@@ -54,15 +60,15 @@ void HarbourGUI::helpScreen()
 	ImGui::Text("Coming soon...");
 }
 
-ImVec4 HarbourGUI::getColor(Colors color)
-{
-	ImVec4 i = {};
-	switch (color) {
-	case BlueGray:
-		i = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
-		break;
-	default:
-		i = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
-	}
-	return i;
-}
+//ImVec4 HarbourGUI::getColor(Colors color)
+//{
+//	ImVec4 i = {};
+//	switch (color) {
+//	case BlueGray:
+//		i = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
+//		break;
+//	default:
+//		i = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
+//	}
+//	return i;
+//}

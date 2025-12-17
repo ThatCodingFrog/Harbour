@@ -3,7 +3,6 @@
 
 #pragma once
 #include <glad/glad.h>
-#include "imgui.h"
 
 #define _CRT_SECURE_NO_WARNINGS
 #include "stb/stb_image.h"

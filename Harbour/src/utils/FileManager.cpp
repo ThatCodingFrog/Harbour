@@ -1,7 +1,12 @@
 #include "utils/FileManager.h"
 #include <vector>
+#include <filesystem>
+#include <fstream>
+
 
 #include <iostream>
+#include <curl/curl.h>
+
 
 void HarbourUtils::FileManager::createNewDirectory(std::string dir)
 {

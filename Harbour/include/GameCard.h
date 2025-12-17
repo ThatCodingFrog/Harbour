@@ -1,6 +1,5 @@
 #pragma once
 
-#include "utils/LoadImage.h"
 #include <string>
 
 namespace Harbour {
@@ -26,7 +25,7 @@ namespace Harbour {
 		std::string m_version;
 		const char* m_thumbnailFilePath = nullptr;
 
-		GLuint m_texture = 0;
+		unsigned int m_texture = 0; //GLuint equivalent
 	};
 
 }

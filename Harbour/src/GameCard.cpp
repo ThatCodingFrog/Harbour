@@ -1,6 +1,9 @@
 #include "GameCard.h"
-#include <iostream>
 
+#include "utils/LoadImage.h"
+
+#include <iostream>
+#include <imgui.h>
 
 Harbour::GameCard::GameCard()
 {
