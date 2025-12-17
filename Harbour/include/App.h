@@ -43,5 +43,6 @@ namespace Harbour {
 
 		void constructLibraryFromJSON(std::vector<GameCard>& output, std::string lib);
 
+
 	};
 }

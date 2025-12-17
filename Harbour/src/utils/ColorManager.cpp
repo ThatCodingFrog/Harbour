@@ -15,9 +15,9 @@ ImVec4 HarbourUtils::ColorManager::getBackground() const
 	return m_backgroundColor;
 }
 
-ImVec4 HarbourUtils::ColorManager::getThemeColor()
+int HarbourUtils::ColorManager::getThemeColor() const
 {
-	return ImVec4();
+	return m_currentColorTheme;
 }
 
 void HarbourUtils::ColorManager::drawBackground() const
@@ -33,6 +33,12 @@ void HarbourUtils::ColorManager::drawBackground() const
 
 }
 
+void HarbourUtils::ColorManager::setThemeColor(int colorTheme)
+{
+	m_currentColorTheme = (Colors)colorTheme;
+	this->setBackgroundColor();
+}
+
 void HarbourUtils::ColorManager::setBackgroundColor()
 {
 	switch (m_currentColorTheme) {
@@ -44,6 +50,7 @@ void HarbourUtils::ColorManager::setBackgroundColor()
 		break;
 	case LightBlue:
 		m_backgroundColor = ImVec4(0.43f, 0.52f, 0.89f, 1.0f);
+		break;
 	default:
 		m_backgroundColor = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
 	}

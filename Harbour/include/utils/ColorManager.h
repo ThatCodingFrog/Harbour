@@ -3,6 +3,16 @@
 struct ImVec4;
 
 namespace HarbourUtils {
+	const enum Colors {
+		BlueGray, //Default
+		DarkBlue, //0.0, 0.0, 0.25, 1.0
+		LightBlue, //0.43 0.52 0.89
+		Green,
+		Teal,
+		Red,
+		Gray
+	};
+
 	class ColorManager {
 	public:
 		ColorManager();
@@ -10,21 +20,12 @@ namespace HarbourUtils {
 	public:
 		//Getters/setters
 		ImVec4 getBackground() const;
-		ImVec4 getThemeColor();
+		int getThemeColor() const;
 		void drawBackground() const;
+		void setThemeColor(int colorTheme);
 
 	private:
 		void setBackgroundColor();
-
-		const enum Colors {
-			BlueGray, //Default
-			DarkBlue, //0.0, 0.0, 0.25, 1.0
-			LightBlue, //0.43 0.52 0.89
-			Green,
-			Teal,
-			Red,
-			Gray
-		};
 
 		Colors m_currentColorTheme = {};
 

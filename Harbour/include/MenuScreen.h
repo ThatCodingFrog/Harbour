@@ -2,7 +2,7 @@
 
 #include <vector>
 #include "GameCard.h"
-
+#include "utils/ColorManager.h"
 
 namespace HarbourGUI {
 	const enum screenID {
@@ -14,7 +14,7 @@ namespace HarbourGUI {
 
 	void MyLibraryScreen(std::vector<Harbour::GameCard>& myLibrary);
 	void downloadsScreen(std::vector<Harbour::GameCard>& downloads);
-	void settingsScreen();
+	void settingsScreen(HarbourUtils::ColorManager& colorManager);
 	void helpScreen();
 }
 

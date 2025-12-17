@@ -2,6 +2,8 @@
 #include "MenuScreen.h"
 #include "GameCard.h"
 
+#include <iostream>
+
 //MyLibraryScreen helped by AI in deciding the parameters after
 //ThatCodingFrog thought of the idea of how to pass data
 void HarbourGUI::MyLibraryScreen(std::vector<Harbour::GameCard>& myLibrary)
@@ -37,16 +39,19 @@ void HarbourGUI::downloadsScreen(std::vector<Harbour::GameCard>& downloads)
 	//Read data from allGames.json, then run loop based on results to draw thumbnails w/ download buttons
 }
 
-void HarbourGUI::settingsScreen()
+void HarbourGUI::settingsScreen(HarbourUtils::ColorManager& colorManager)
 {
 	ImGui::PushFont(NULL, 24.0f);
 	ImGui::Text("Settings");
 	ImGui::PopFont();
 
 	const char* schemes[] = { "Blue Gray", "Dark Blue" };
-	int current = 1;
+	int current = colorManager.getThemeColor();
 
-	ImGui::Combo("Color Schemes", &current, "Blue Gray\0Dark Blue", 4);
+	if ( ImGui::Combo("Color Schemes", &current, "Blue Gray\0Dark Blue\0Light Blue", 4)) {
+		std::cout << current;
+		colorManager.setThemeColor(current);
+	}
 
 	ImGui::Text("Coming soon...");
 }
