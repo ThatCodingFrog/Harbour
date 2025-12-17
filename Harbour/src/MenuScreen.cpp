@@ -45,10 +45,10 @@ void HarbourGUI::settingsScreen(HarbourUtils::ColorManager& colorManager)
 	ImGui::Text("Settings");
 	ImGui::PopFont();
 
-	const char* schemes[] = { "Blue Gray", "Dark Blue" };
+	const char* schemes[] = { "Blue Gray", "Dark Blue", "Light Blue" };
 	int current = colorManager.getThemeColor();
 
-	if ( ImGui::Combo("Color Schemes", &current, "Blue Gray\0Dark Blue\0Light Blue", 4)) {
+	if ( ImGui::Combo("Background Color", &current, schemes, IM_ARRAYSIZE(schemes)) ) {
 		std::cout << current;
 		colorManager.setThemeColor(current);
 	}
