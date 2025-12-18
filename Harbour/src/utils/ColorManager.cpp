@@ -51,6 +51,21 @@ void HarbourUtils::ColorManager::setBackgroundColor()
 	case LightBlue:
 		m_backgroundColor = ImVec4(0.43f, 0.52f, 0.89f, 1.0f);
 		break;
+	case Green:
+		m_backgroundColor = ImVec4(0.05f, 0.2f, 0.05f, 1.0f);
+		break;
+	case Teal:
+		m_backgroundColor = ImVec4(0.05f, 0.25f, 0.25f, 1.0f);
+		break;
+	case DarkRed:
+		m_backgroundColor = ImVec4(0.2f, 0.05f, 0.05f, 1.0f);
+		break;
+	case LightRed:
+		m_backgroundColor = ImVec4(0.85f, 0.25f, 0.25f, 1.0f);
+		break;
+	case DarkGray:
+		m_backgroundColor = ImVec4(0.15f, 0.15f, 0.15f, 1.0f);
+		break;
 	default:
 		m_backgroundColor = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
 	}

@@ -7,10 +7,11 @@ namespace HarbourUtils {
 		BlueGray, //Default
 		DarkBlue, //0.0, 0.0, 0.25, 1.0
 		LightBlue, //0.43 0.52 0.89
-		Green,
-		Teal,
-		Red,
-		Gray
+		Green, //0.05, 0.2, 0.05
+		Teal, //0.05, 0.25, 0.25	
+		DarkRed, //0.2, 0.05, 0.05
+		LightRed, //0.85, 0.25, 0.25
+		DarkGray, //0.15, 0.15, 0.15
 	};
 
 	class ColorManager {
@@ -27,9 +28,9 @@ namespace HarbourUtils {
 	private:
 		void setBackgroundColor();
 
-		Colors m_currentColorTheme = {};
+		Colors m_currentColorTheme = {}; //Doesn't do much yet, add load by file
 
-		ImVec4 m_backgroundColor = {};
+		ImVec4 m_backgroundColor = {}; //Set by setBackgroundColor() and m_currentColorTheme
 
 	};
 }

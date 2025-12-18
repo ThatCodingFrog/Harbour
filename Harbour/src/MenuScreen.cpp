@@ -45,7 +45,12 @@ void HarbourGUI::settingsScreen(HarbourUtils::ColorManager& colorManager)
 	ImGui::Text("Settings");
 	ImGui::PopFont();
 
-	const char* schemes[] = { "Blue Gray", "Dark Blue", "Light Blue" };
+	const char* schemes[] = { 
+		"Blue Gray", "Dark Blue", "Light Blue",
+		"Green", "Teal", "Dark Red", "Light Red", "Dark Gray"
+		//Currently needs to follow order of Colors enum or it will break
+	};
+
 	int current = colorManager.getThemeColor();
 
 	if ( ImGui::Combo("Background Color", &current, schemes, IM_ARRAYSIZE(schemes)) ) {
@@ -64,16 +69,3 @@ void HarbourGUI::helpScreen()
 
 	ImGui::Text("Coming soon...");
 }
-
-//ImVec4 HarbourGUI::getColor(Colors color)
-//{
-//	ImVec4 i = {};
-//	switch (color) {
-//	case BlueGray:
-//		i = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
-//		break;
-//	default:
-//		i = ImVec4(0.1f, 0.1f, 0.15f, 1.0f);
-//	}
-//	return i;
-//}
