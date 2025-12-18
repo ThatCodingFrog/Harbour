@@ -27,10 +27,16 @@ namespace HarbourUtils {
 
 	private:
 		void setBackgroundColor();
+		void setAccentColor();
+		void setHoverColor();
+		void setMenuBarColor();
 
 		Colors m_currentColorTheme = {}; //Doesn't do much yet, add load by file
 
 		ImVec4 m_backgroundColor = {}; //Set by setBackgroundColor() and m_currentColorTheme
+		ImVec4 m_menuBarColor = {}; //The menu bar background, only changes on certain themes
+		ImVec4 m_accentColor = {}; //Dropdowns, other UI
+		ImVec4 m_hoverColor = {}; //Buttons when hovered
 
 	};
 }

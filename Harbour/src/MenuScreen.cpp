@@ -53,10 +53,14 @@ void HarbourGUI::settingsScreen(HarbourUtils::ColorManager& colorManager)
 
 	int current = colorManager.getThemeColor();
 
+	//ImGui::PushStyleColor(ImGuiCol_PopupBg, ImVec4(0.8f, 0.0f, 0.0f, 1.0f));
+
 	if ( ImGui::Combo("Background Color", &current, schemes, IM_ARRAYSIZE(schemes)) ) {
 		std::cout << current;
 		colorManager.setThemeColor(current);
 	}
+
+	//ImGui::PopStyleColor();
 
 	ImGui::Text("Coming soon...");
 }

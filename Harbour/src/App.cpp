@@ -35,6 +35,13 @@ void Harbour::App::init()
 	IMGUI_CHECKVERSION();
 	ImGui::CreateContext();
 
+	int read = ImGuiCol_MenuBarBg;
+
+	std::cout << ImGui::GetStyle().Colors[read].x << std::endl;
+	std::cout << ImGui::GetStyle().Colors[read].y << std::endl;
+	std::cout << ImGui::GetStyle().Colors[read].z << std::endl;
+	std::cout << ImGui::GetStyle().Colors[read].w << std::endl;
+
 	ImGuiIO& io = ImGui::GetIO();
 	io.Fonts->AddFontFromFileTTF("./assets/Fonts/montserrat/Montserrat-Regular.otf", 16.0f);
 
