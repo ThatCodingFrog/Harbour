@@ -25,11 +25,10 @@ add_executable(Harbour
     Harbour/src/main.cpp
     Harbour/src/App.cpp
     Harbour/src/GameCard.cpp
-    Harbour/src/utils/FileManager.cpp 
-    Harbour/include/MenuScreen.h
+    Harbour/src/utils/FileManager.cpp
     Harbour/src/MenuScreen.cpp
-    Harbour/include/utils/LoadImage.h
     Harbour/src/utils/LoadImage.cpp
+    Harbour/src/utils/ColorManager.cpp
 )
 
 target_include_directories(Harbour PRIVATE 

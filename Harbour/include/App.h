@@ -11,6 +11,7 @@
 
 #include "GameCard.h"
 #include "utils/FileManager.h"
+#include "utils/ColorManager.h"
 #include "MenuScreen.h"
 
 namespace Harbour {
@@ -38,7 +39,10 @@ namespace Harbour {
 
 	private:
 		HarbourUtils::FileManager m_fileManager = {};
+		HarbourUtils::ColorManager m_colorManager = {};
+
 		void constructLibraryFromJSON(std::vector<GameCard>& output, std::string lib);
+
 
 	};
 }

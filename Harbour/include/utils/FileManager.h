@@ -1,9 +1,7 @@
 #pragma once
-#include <filesystem>
-#include <fstream>
+
 #include <string>
 #include <nlohmann/json.hpp>
-#include <curl/curl.h>
 
 namespace HarbourUtils {
 	class FileManager {
