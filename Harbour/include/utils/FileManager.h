@@ -22,6 +22,11 @@ namespace HarbourUtils {
 		void checkLatestVersions();
 
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
+=======
+		//Running executables
+		void startGame(std::string file);
+>>>>>>> Stashed changes
 =======
 		//Running executables
 		void startGame(std::string file);
