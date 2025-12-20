@@ -13,6 +13,7 @@ namespace HarbourUtils {
 		void writeFile(std::string file, std::string data);
 		std::string readFile(std::string file);
 
+		//Updating related functions
 		nlohmann::json readJSON(std::string file);
 		std::string makeCURLRequest(const char* url);
 
@@ -20,6 +21,11 @@ namespace HarbourUtils {
 
 		void checkLatestVersions();
 
+<<<<<<< Updated upstream
+=======
+		//Running executables
+		void startGame(std::string file);
+>>>>>>> Stashed changes
 
 	private:
 		nlohmann::json checkShipVersion();

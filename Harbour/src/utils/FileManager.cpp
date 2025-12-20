@@ -106,6 +106,17 @@ void HarbourUtils::FileManager::checkLatestVersions()
 #endif
 }
 
+void HarbourUtils::FileManager::startGame(std::string file)
+{
+#if defined(_WIN32)
+	//Use CreateProcess or ShellExecute to start the selected game
+#elif defined(__linux__)
+	//Use posix_spawn or fork + exec to start the selected game
+#elif defined(__APPLE__)
+	//Implement similar to Linux for starting game, possibly merge the two
+#endif
+}
+
 nlohmann::json HarbourUtils::FileManager::checkShipVersion()
 {
     nlohmann::json ship = nlohmann::json::parse( makeCURLRequest("https://api.github.com/repos/HarbourMasters/Shipwright/releases/latest") );
