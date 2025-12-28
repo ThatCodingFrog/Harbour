@@ -1,5 +1,8 @@
 #include "utils/FileManager.h"
 #include <vector>
+#include <filesystem>
+#include <fstream>
+#include <sstream>
 
 #include <iostream>
 
@@ -99,6 +102,9 @@ void HarbourUtils::FileManager::checkLatestVersions()
     auto latest = this->checkShipVersion();
     auto installed = this->readJSON("library/myGames.json");
 
+    std::cout << "Latest: " << latest.dump(4) << std::endl;
+    std::cout << "Installed: " << installed << std::endl;
+    std::cout << installed.size() << std::endl;
 
 #elif defined(__linux__)
 
@@ -120,6 +126,8 @@ void HarbourUtils::FileManager::startGame(std::string file)
 nlohmann::json HarbourUtils::FileManager::checkShipVersion()
 {
     nlohmann::json ship = nlohmann::json::parse( makeCURLRequest("https://api.github.com/repos/HarbourMasters/Shipwright/releases/latest") );
+    this->parseVersionString( ship.value("tag_name") );
+    //this->parseVersionString( /*Something with the user's library*/);
     //std::cout << ship << std::endl;
     return ship;
 }
@@ -127,6 +135,9 @@ nlohmann::json HarbourUtils::FileManager::checkShipVersion()
 nlohmann::json HarbourUtils::FileManager::check2ShipVersion()
 {
     nlohmann::json ship2 = nlohmann::json::parse ( makeCURLRequest("https://api.github.com/repos/HarbourMasters/2Ship2Harkinian/releases/latest") );
+
+    
+
     return ship2;
 }
 
@@ -134,4 +145,27 @@ nlohmann::json HarbourUtils::FileManager::checkStarShipVersion()
 {
     nlohmann::json starship = nlohmann::json::parse(makeCURLRequest("https://api.github.com/repos/HarbourMasters/2Ship2Harkinian/releases/latest"));
     return starship;
+}
+
+//Both ChatGPT and Github Copilot had the same idea for this function and wrote it
+HarbourUtils::VersionInfo HarbourUtils::FileManager::parseVersionString(const std::string& versionStr)
+{
+    VersionInfo vi = {};
+	std::stringstream ss(versionStr);
+    std::string section;
+
+	if (std::getline(ss, section, '.')) vi.major = std::stoi(section);
+    if (std::getline(ss, section, '.')) vi.minor = std::stoi(section);
+    if (std::getline(ss, section, '.')) vi.patch = std::stoi(section);
+
+    return vi;
+}
+
+bool HarbourUtils::FileManager::versionOutdated(const VersionInfo& installed, const VersionInfo& latest)
+{
+    if (installed.major < latest.major) return true;
+    if (installed.minor < latest.minor) return true;
+    if (installed.patch < latest.patch) return true;
+
+    return false;
 }
