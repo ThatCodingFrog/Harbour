@@ -3,6 +3,8 @@
 #include <filesystem>
 #include <fstream>
 #include <sstream>
+#include <curl/curl.h>
+
 
 #include <iostream>
 
@@ -126,9 +128,11 @@ void HarbourUtils::FileManager::startGame(std::string file)
 nlohmann::json HarbourUtils::FileManager::checkShipVersion()
 {
     nlohmann::json ship = nlohmann::json::parse( makeCURLRequest("https://api.github.com/repos/HarbourMasters/Shipwright/releases/latest") );
-    this->parseVersionString( ship.value("tag_name") );
+
+    std::cout << ship.at("tag_name") << std::endl;
+
+    this->parseVersionString( ship.at("tag_name") );
     //this->parseVersionString( /*Something with the user's library*/);
-    //std::cout << ship << std::endl;
     return ship;
 }
 
@@ -147,19 +151,38 @@ nlohmann::json HarbourUtils::FileManager::checkStarShipVersion()
     return starship;
 }
 
-//Both ChatGPT and Github Copilot had the same idea for this function and wrote it
+//function by ChatGPT
 HarbourUtils::VersionInfo HarbourUtils::FileManager::parseVersionString(const std::string& versionStr)
 {
-    VersionInfo vi = {};
-	std::stringstream ss(versionStr);
-    std::string section;
+    VersionInfo vi = { 0, 0, 0 };
 
-	if (std::getline(ss, section, '.')) vi.major = std::stoi(section);
-    if (std::getline(ss, section, '.')) vi.minor = std::stoi(section);
-    if (std::getline(ss, section, '.')) vi.patch = std::stoi(section);
+    std::stringstream ss(versionStr);
+    std::string section;
+    int* targets[3] = { &vi.major, &vi.minor, &vi.patch };
+    int index = 0;
+
+    while (std::getline(ss, section, '.') && index < 3)
+    {
+        std::string digits;
+
+        // Keep only numeric characters
+        for (char c : section)
+        {
+            if (std::isdigit(static_cast<unsigned char>(c)))
+                digits += c;
+            else if (!digits.empty())
+                break;  // stop at first non-digit after number starts
+        }
+
+        if (!digits.empty())
+            *targets[index] = std::stoi(digits);
+
+        index++;
+    }
 
     return vi;
 }
+
 
 bool HarbourUtils::FileManager::versionOutdated(const VersionInfo& installed, const VersionInfo& latest)
 {
@@ -169,3 +192,57 @@ bool HarbourUtils::FileManager::versionOutdated(const VersionInfo& installed, co
 
     return false;
 }
+
+
+/*
+When I come back:
+
+#include <curl/curl.h>
+#include <fstream>
+#include <iostream>
+
+static size_t WriteBinaryCallback(void* contents,
+                                  size_t size,
+                                  size_t nmemb,
+                                  void* userp)
+{
+    std::ofstream* stream = static_cast<std::ofstream*>(userp);
+    size_t totalSize = size * nmemb;
+
+    stream->write(static_cast<char*>(contents), totalSize);
+
+    return totalSize;
+}
+
+
+bool downloadFileBinary(const std::string& url,
+                        const std::string& outputPath)
+{
+    CURL* curl = curl_easy_init();
+    if (!curl)
+        return false;
+
+    std::ofstream file(outputPath, std::ios::binary);
+    if (!file.is_open())
+    {
+        curl_easy_cleanup(curl);
+        return false;
+    }
+
+    curl_easy_setopt(curl, CURLOPT_URL, url.c_str());
+    curl_easy_setopt(curl, CURLOPT_USERAGENT, "HarbourLauncher/1.0");
+
+    curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteBinaryCallback);
+    curl_easy_setopt(curl, CURLOPT_WRITEDATA, &file);
+
+    CURLcode res = curl_easy_perform(curl);
+
+    curl_easy_cleanup(curl);
+    file.close();
+
+    return (res == CURLE_OK);
+}
+
+
+//Written by ChatGPT, needs verification, so not being used right now
+*/

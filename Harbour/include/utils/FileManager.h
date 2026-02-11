@@ -1,7 +1,6 @@
 #pragma once
 #include <string>
 #include <nlohmann/json.hpp>
-#include <curl/curl.h>
 #include "GameCard.h"
 
 namespace HarbourUtils {
