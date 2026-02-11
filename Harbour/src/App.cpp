@@ -6,7 +6,13 @@
 #include "App.h"
 #include <iostream>
 
+#include <glad/glad.h>
 #include "utils/LoadImage.h"
+#include "imgui.h"
+#include "backends/imgui_impl_sdl2.h"
+#include "backends/imgui_impl_opengl3.h"
+#include "misc/freetype/imgui_freetype.h"
+
 
 Harbour::App::App()
 {
@@ -99,10 +105,36 @@ void Harbour::App::run()
             ImGui::EndMenuBar();
         }
 
+
+        // Main content
         this->drawCurrentScreen();
 
         ImGui::End();
 
+
+        //Part of this was me, part of this was ChatGPT
+        const float footerHeight = ImGui::GetFrameHeight();
+
+        ImGuiViewport* vp = ImGui::GetMainViewport();
+
+        ImGui::SetNextWindowPos(
+            ImVec2(vp->Pos.x, vp->Pos.y + vp->Size.y - footerHeight)
+        );
+        ImGui::SetNextWindowSize(
+            ImVec2(vp->Size.x, footerHeight)
+        );
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
+        ImGui::Begin("Footer", nullptr, ImGuiWindowFlags_NoDecoration |
+            ImGuiWindowFlags_NoBackground |
+            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+
+        ImGui::ProgressBar(m_progress, ImVec2(-FLT_MIN, ImGui::GetFrameHeight()), this->updateMessage().c_str());
+
+        ImGui::End();
+
+        ImGui::PopStyleVar();
 
         ImGui::Render();
         glViewport(0, 0, 1280, 720);
@@ -110,6 +142,8 @@ void Harbour::App::run()
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(m_window);
+
+        //break; //Solely exists for the one time logging of data
     }
 }
 
@@ -158,3 +192,17 @@ void Harbour::App::constructLibraryFromJSON(std::vector<GameCard>& output, std::
     }
 }
 
+std::string Harbour::App::updateMessage()
+{
+    std::string message = "";
+    if (m_progress == 0.0f) {
+        message = "No Downloads";
+    }
+    else if(m_progress == 1.0f) {
+        message = "Download Complete!";
+    }
+    else {
+        message = "Download In Progress...";
+    }
+    return message;
+}

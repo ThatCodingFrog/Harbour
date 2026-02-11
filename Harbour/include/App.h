@@ -1,17 +1,14 @@
 #pragma once
 
 #include <SDL.h>
-#include <glad/glad.h>
-#include "imgui.h"
-#include "backends/imgui_impl_sdl2.h"
-#include "backends/imgui_impl_opengl3.h"
-#include "misc/freetype/imgui_freetype.h"
+
 #include <string>
 #include <vector>
 
 #include "GameCard.h"
 #include "utils/FileManager.h"
 #include "MenuScreen.h"
+
 
 namespace Harbour {
 	class App {
@@ -39,6 +36,9 @@ namespace Harbour {
 	private:
 		HarbourUtils::FileManager m_fileManager = {};
 		void constructLibraryFromJSON(std::vector<GameCard>& output, std::string lib);
+
+		float m_progress = 0.0f;
+		std::string updateMessage();
 
 	};
 }
