@@ -142,8 +142,6 @@ void Harbour::App::run()
         glClear(GL_COLOR_BUFFER_BIT);
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(m_window);
-
-        //break; //Solely exists for the one time logging of data
     }
 }
 
