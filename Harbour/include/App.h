@@ -1,7 +1,5 @@
 #pragma once
 
-#include <SDL.h>
-
 #include <string>
 #include <vector>
 
@@ -9,9 +7,12 @@
 #include "utils/FileManager.h"
 #include "MenuScreen.h"
 
+struct SDL_Window;
 
-namespace Harbour {
-	class App {
+namespace Harbour
+{
+	class App
+	{
 	public:
 		App();
 		~App();
@@ -23,10 +24,10 @@ namespace Harbour {
 
 	public:
 		void run();
-		void switchScreens(HarbourGUI::screenID& id);
+		void switchScreens(HarbourGUI::screenID &id);
 
 	private:
-		SDL_Window* m_window = nullptr;
+		SDL_Window *m_window = nullptr;
 		bool m_isRunning = true;
 		std::vector<GameCard> m_library = {};
 		std::vector<GameCard> m_allGames = {};
@@ -38,6 +39,5 @@ namespace Harbour {
 
 		float m_progress = 0.0f;
 		std::string updateMessage();
-
 	};
 }

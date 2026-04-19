@@ -4,13 +4,6 @@
 
 cmake_minimum_required(VERSION 3.16)
 
-include(CMake/setup_vcpkg.cmake)
-
-# Now force toolchain
-if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_TOOLCHAIN_FILE}" CACHE STRING "" FORCE)
-endif()
-
 project(Harbour VERSION 0.1.0 LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)

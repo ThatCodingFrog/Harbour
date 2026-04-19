@@ -1,7 +1,6 @@
 /*
-* The basis for the App::init(), App::run(), and App::shutdown() came from ChatGPT, but pieces of it have been modified by me (ThatCodingFrog)
-*/
-
+ * The basis for the App::init(), App::run(), and App::shutdown() came from ChatGPT, but pieces of it have been modified by me (ThatCodingFrog)
+ */
 
 #include "App.h"
 #include <iostream>
@@ -13,14 +12,11 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "misc/freetype/imgui_freetype.h"
 
+#include <SDL.h>
 
 Harbour::App::App()
 {
-	this->init();
-    m_fileManager.constructLibraryFromJSON(m_library, "library/myGames.json");
-    m_fileManager.constructLibraryFromJSON(m_allGames, "library/allGames.json");
-    
-    m_fileManager.checkLatestVersions();
+    this->init();
 }
 
 Harbour::App::~App()
@@ -32,8 +28,8 @@ void Harbour::App::init()
 {
     SDL_Init(SDL_INIT_VIDEO);
     m_window = SDL_CreateWindow("Harbour of Harkinian",
-        SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-        1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+                                SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+                                1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(m_window);
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
@@ -41,7 +37,7 @@ void Harbour::App::init()
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
 
-    ImGuiIO& io = ImGui::GetIO();
+    ImGuiIO &io = ImGui::GetIO();
     io.Fonts->AddFontFromFileTTF("./assets/Fonts/montserrat/Montserrat-Regular.otf", 16.0f);
 
     ImGui_ImplSDL2_InitForOpenGL(m_window, gl_context);
@@ -60,75 +56,76 @@ void Harbour::App::shutdown()
 void Harbour::App::run()
 {
     SDL_Event event;
-    while (m_isRunning) {
-        while (SDL_PollEvent(&event)) {
+    while (m_isRunning)
+    {
+        while (SDL_PollEvent(&event))
+        {
             ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT) m_isRunning = false;
+            if (event.type == SDL_QUIT)
+                m_isRunning = false;
         }
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplSDL2_NewFrame();
-        ImGui::NewFrame();      
+        ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));
         ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
-        
-        ImGui::Begin("MainOverlay", nullptr,
-            ImGuiWindowFlags_NoDecoration |
-            ImGuiWindowFlags_NoBackground |
-            ImGuiWindowFlags_NoMove |
-            ImGuiWindowFlags_MenuBar
-        );
-        //for directly into the window
 
-        if (ImGui::BeginMenuBar()) {
+        ImGui::Begin("MainOverlay", nullptr,
+                     ImGuiWindowFlags_NoDecoration |
+                         ImGuiWindowFlags_NoBackground |
+                         ImGuiWindowFlags_NoMove |
+                         ImGuiWindowFlags_MenuBar);
+        // for directly into the window
+
+        if (ImGui::BeginMenuBar())
+        {
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
             HarbourGUI::screenID next = {};
-            if (ImGui::Button("My Library")) {
+            if (ImGui::Button("My Library"))
+            {
                 next = HarbourGUI::MyLibrary;
                 this->switchScreens(next);
             }
-            if (ImGui::Button("All Games")) {
+            if (ImGui::Button("All Games"))
+            {
                 next = HarbourGUI::AllGames;
                 this->switchScreens(next);
             }
-            if (ImGui::Button("Settings")) {
+            if (ImGui::Button("Settings"))
+            {
                 next = HarbourGUI::Settings;
                 this->switchScreens(next);
             }
-            if (ImGui::Button("Help Center")) {
+            if (ImGui::Button("Help Center"))
+            {
                 next = HarbourGUI::HelpCenter;
                 this->switchScreens(next);
             }
             ImGui::PopStyleColor();
-            
+
             ImGui::EndMenuBar();
         }
-
 
         // Main content
         this->drawCurrentScreen();
 
         ImGui::End();
 
-
-        //Part of this was me, part of this was ChatGPT
+        // Part of this was me, part of this was ChatGPT
         const float footerHeight = ImGui::GetFrameHeight();
 
-        ImGuiViewport* vp = ImGui::GetMainViewport();
+        ImGuiViewport *vp = ImGui::GetMainViewport();
 
         ImGui::SetNextWindowPos(
-            ImVec2(vp->Pos.x, vp->Pos.y + vp->Size.y - footerHeight)
-        );
+            ImVec2(vp->Pos.x, vp->Pos.y + vp->Size.y - footerHeight));
         ImGui::SetNextWindowSize(
-            ImVec2(vp->Size.x, footerHeight)
-        );
+            ImVec2(vp->Size.x, footerHeight));
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
 
-        ImGui::Begin("Footer", nullptr, ImGuiWindowFlags_NoDecoration |
-            ImGuiWindowFlags_NoBackground |
-            ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+        ImGui::Begin("Footer", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
         ImGui::ProgressBar(m_progress, ImVec2(-FLT_MIN, ImGui::GetFrameHeight()), this->updateMessage().c_str());
 
@@ -145,14 +142,15 @@ void Harbour::App::run()
     }
 }
 
-void Harbour::App::switchScreens(HarbourGUI::screenID& id)
+void Harbour::App::switchScreens(HarbourGUI::screenID &id)
 {
     m_screenID = id;
 }
 
 void Harbour::App::drawCurrentScreen()
 {
-    switch (m_screenID) {
+    switch (m_screenID)
+    {
     case HarbourGUI::MyLibrary:
     {
         HarbourGUI::MyLibraryScreen(m_library);
@@ -178,18 +176,19 @@ void Harbour::App::drawCurrentScreen()
     }
 }
 
-
-
 std::string Harbour::App::updateMessage()
 {
     std::string message = "";
-    if (m_progress == 0.0f) {
+    if (m_progress == 0.0f)
+    {
         message = "No Downloads";
     }
-    else if(m_progress == 1.0f) {
+    else if (m_progress == 1.0f)
+    {
         message = "Download Complete!";
     }
-    else {
+    else
+    {
         message = "Download In Progress...";
     }
     return message;

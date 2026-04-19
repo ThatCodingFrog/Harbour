@@ -5,6 +5,7 @@
         "sdl2",
         "freetype",
         "glad",
-        "curl"
+        "curl",
+        "libarchive"
     ]
 }
