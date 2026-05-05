@@ -12,11 +12,17 @@
 #include "backends/imgui_impl_opengl3.h"
 #include "misc/freetype/imgui_freetype.h"
 
+#include "utils/FileManager.h"
+#include "utils/NetworkManager.h"
+
 #include <SDL.h>
 
 Harbour::App::App()
 {
     this->init();
+
+    m_fileManager = std::make_unique<HarbourUtils::FileManager>();
+    m_networkManager = std::make_unique<HarbourUtils::NetworkManager>(m_fileManager.get());
 }
 
 Harbour::App::~App()

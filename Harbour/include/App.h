@@ -2,12 +2,18 @@
 
 #include <string>
 #include <vector>
+#include <memory>
 
 #include "GameCard.h"
-#include "utils/FileManager.h"
 #include "MenuScreen.h"
 
 struct SDL_Window;
+
+namespace HarbourUtils
+{
+	class FileManager;
+	class NetworkManager;
+}
 
 namespace Harbour
 {
@@ -35,7 +41,8 @@ namespace Harbour
 		int m_screenID = 0;
 
 	private:
-		HarbourUtils::FileManager m_fileManager = {};
+		std::unique_ptr<HarbourUtils::FileManager> m_fileManager;
+		std::unique_ptr<HarbourUtils::NetworkManager> m_networkManager;
 
 		float m_progress = 0.0f;
 		std::string updateMessage();
