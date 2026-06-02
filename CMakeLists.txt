@@ -12,16 +12,6 @@ find_package(freetype CONFIG REQUIRED)
 find_package(LibArchive REQUIRED)
 find_package(cpr REQUIRED)
 
-# include(FetchContent)
-
-# FetchContent_Declare(
-#     cpr
-#     GIT_REPOSITORY https://github.com/libcpr/cpr.git
-#     GIT_TAG 1.14.2
-# )
-
-# FetchContent_MakeAvailable(cpr)
-
 
 add_executable(Harbour
     Harbour/src/main.cpp
@@ -32,6 +22,7 @@ add_executable(Harbour
     Harbour/src/utils/LoadImage.cpp
     Harbour/src/utils/NetworkManager.cpp
     Harbour/src/utils/DownloadManager.cpp
+    Harbour/src/utils/LibraryManager.cpp
 )
 
 target_include_directories(Harbour PRIVATE 

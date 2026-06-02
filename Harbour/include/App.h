@@ -13,6 +13,7 @@ namespace HarbourUtils
 {
 	class FileManager;
 	class NetworkManager;
+	class LibraryManager;
 }
 
 namespace Harbour
@@ -27,6 +28,7 @@ namespace Harbour
 		void init();
 		void shutdown();
 		void drawCurrentScreen();
+		void drawSplashScreen();
 
 	public:
 		void run();
@@ -43,6 +45,7 @@ namespace Harbour
 	private:
 		std::unique_ptr<HarbourUtils::FileManager> m_fileManager;
 		std::unique_ptr<HarbourUtils::NetworkManager> m_networkManager;
+		std::unique_ptr<HarbourUtils::LibraryManager> m_libraryManager;
 
 		float m_progress = 0.0f;
 		std::string updateMessage();

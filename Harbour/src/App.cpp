@@ -14,15 +14,18 @@
 
 #include "utils/FileManager.h"
 #include "utils/NetworkManager.h"
+#include "utils/LibraryManager.h"
 
 #include <SDL.h>
 
 Harbour::App::App()
 {
     this->init();
+    this->drawSplashScreen();
 
     m_fileManager = std::make_unique<HarbourUtils::FileManager>();
     m_networkManager = std::make_unique<HarbourUtils::NetworkManager>(m_fileManager.get());
+    m_libraryManager = std::make_unique<HarbourUtils::LibraryManager>(m_fileManager.get());
 }
 
 Harbour::App::~App()
@@ -180,6 +183,10 @@ void Harbour::App::drawCurrentScreen()
     default:
         HarbourGUI::MyLibraryScreen(m_library);
     }
+}
+
+void Harbour::App::drawSplashScreen()
+{
 }
 
 std::string Harbour::App::updateMessage()

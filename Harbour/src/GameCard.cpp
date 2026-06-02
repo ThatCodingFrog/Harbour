@@ -39,6 +39,11 @@ void Harbour::GameCard::setFilePath()
 {
 }
 
+void Harbour::GameCard::setThumbnailImg(std::string path)
+{
+	m_thumbnailFilePath = path.c_str();
+}
+
 std::string Harbour::GameCard::getName()
 {
 	return m_name;
@@ -57,6 +62,7 @@ void Harbour::GameCard::draw()
 
 	this->drawThumbnail();
 	ImGui::Text(m_name.c_str());
+	ImGui::Text(m_version.c_str());
 
 	ImGui::EndChild();
 }
