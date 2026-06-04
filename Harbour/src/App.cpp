@@ -26,6 +26,8 @@ Harbour::App::App()
     m_fileManager = std::make_unique<HarbourUtils::FileManager>();
     m_networkManager = std::make_unique<HarbourUtils::NetworkManager>(m_fileManager.get());
     m_libraryManager = std::make_unique<HarbourUtils::LibraryManager>(m_fileManager.get());
+
+    m_library = m_libraryManager->constructLibraryFromJSON("cache/manifest.json");
 }
 
 Harbour::App::~App()
@@ -119,6 +121,11 @@ void Harbour::App::run()
 
         // Main content
         this->drawCurrentScreen();
+
+        if (m_onSplash)
+        {
+            this->drawSplashScreen();
+        }
 
         ImGui::End();
 

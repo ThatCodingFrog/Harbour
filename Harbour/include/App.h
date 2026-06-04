@@ -41,6 +41,7 @@ namespace Harbour
 		std::vector<GameCard> m_allGames = {};
 
 		int m_screenID = 0;
+		bool m_onSplash = true;
 
 	private:
 		std::unique_ptr<HarbourUtils::FileManager> m_fileManager;

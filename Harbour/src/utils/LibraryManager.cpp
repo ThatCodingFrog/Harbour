@@ -1,7 +1,6 @@
 #include "utils/LibraryManager.h"
 #include "utils/FileManager.h"
 
-#include "nlohmann/json.hpp"
 #include <iostream>
 
 HarbourUtils::LibraryManager::LibraryManager(HarbourUtils::FileManager *fileManager)
@@ -24,5 +23,17 @@ std::vector<Harbour::GameCard> HarbourUtils::LibraryManager::constructLibraryFro
         return library;
     }
 
+    std::cout << libJSON.dump(4) << std::endl;
+
     return library;
+}
+
+Harbour::GameCard HarbourUtils::LibraryManager::makeEntry(nlohmann::json entry)
+{
+    if (entry.contains("name") && entry.contains("version"))
+    {
+        return Harbour::GameCard(entry["name"].get<std::string>(), entry["version"].get<std::string>());
+    }
+
+    return Harbour::GameCard();
 }

@@ -2,6 +2,8 @@
 #include "GameCard.h"
 #include <string>
 
+#include "nlohmann/json.hpp"
+
 namespace HarbourUtils
 {
     class FileManager;
@@ -16,5 +18,6 @@ namespace HarbourUtils
 
     private:
         FileManager *m_fileManager = nullptr;
+        Harbour::GameCard makeEntry(nlohmann::json entry);
     };
 }
