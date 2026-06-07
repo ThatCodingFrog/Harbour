@@ -3,6 +3,8 @@
 #include <string>
 #include <vector>
 #include <memory>
+#include <atomic>
+#include <thread>
 
 #include "GameCard.h"
 #include "MenuScreen.h"
@@ -29,10 +31,10 @@ namespace Harbour
 		void shutdown();
 		void drawCurrentScreen();
 		void drawSplashScreen();
+		void drawFooter();
 
 	public:
 		void run();
-		void switchScreens(HarbourGUI::screenID &id);
 
 	private:
 		SDL_Window *m_window = nullptr;
@@ -41,7 +43,6 @@ namespace Harbour
 		std::vector<GameCard> m_allGames = {};
 
 		int m_screenID = 0;
-		bool m_onSplash = true;
 
 	private:
 		std::unique_ptr<HarbourUtils::FileManager> m_fileManager;
@@ -50,5 +51,12 @@ namespace Harbour
 
 		float m_progress = 0.0f;
 		std::string updateMessage();
+
+		GLuint m_splashImg = 0;
+
+	private:
+		std::thread m_initThread;
+		std::atomic<bool> m_initComplete = false;
+		void initAppClasses();
 	};
 }

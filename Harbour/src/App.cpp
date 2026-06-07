@@ -17,21 +17,21 @@
 #include "utils/LibraryManager.h"
 
 #include <SDL.h>
+#include "utils/LoadImage.h"
 
 Harbour::App::App()
 {
     this->init();
-    this->drawSplashScreen();
-
-    m_fileManager = std::make_unique<HarbourUtils::FileManager>();
-    m_networkManager = std::make_unique<HarbourUtils::NetworkManager>(m_fileManager.get());
-    m_libraryManager = std::make_unique<HarbourUtils::LibraryManager>(m_fileManager.get());
-
-    m_library = m_libraryManager->constructLibraryFromJSON("cache/manifest.json");
+    m_initThread = std::thread(&Harbour::App::initAppClasses, this);
 }
 
 Harbour::App::~App()
 {
+    if (m_initThread.joinable())
+    {
+        m_initThread.join();
+    }
+
     this->shutdown();
 }
 
@@ -95,59 +95,33 @@ void Harbour::App::run()
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
             HarbourGUI::screenID next = {};
             if (ImGui::Button("My Library"))
-            {
-                next = HarbourGUI::MyLibrary;
-                this->switchScreens(next);
-            }
+                m_screenID = HarbourGUI::MyLibrary;
             if (ImGui::Button("All Games"))
-            {
-                next = HarbourGUI::AllGames;
-                this->switchScreens(next);
-            }
+                m_screenID = HarbourGUI::AllGames;
             if (ImGui::Button("Settings"))
-            {
-                next = HarbourGUI::Settings;
-                this->switchScreens(next);
-            }
+                m_screenID = HarbourGUI::Settings;
             if (ImGui::Button("Help Center"))
-            {
-                next = HarbourGUI::HelpCenter;
-                this->switchScreens(next);
-            }
+                m_screenID = HarbourGUI::HelpCenter;
+
             ImGui::PopStyleColor();
 
             ImGui::EndMenuBar();
         }
 
         // Main content
-        this->drawCurrentScreen();
-
-        if (m_onSplash)
+        if (!m_initComplete.load()) // Check whether the init is complete, otherwise show the main screen
+        // Can probably be expanded to have the splash screen shown at other times if necessary
         {
             this->drawSplashScreen();
+        }
+        else
+        {
+            this->drawCurrentScreen();
         }
 
         ImGui::End();
 
-        // Part of this was me, part of this was ChatGPT
-        const float footerHeight = ImGui::GetFrameHeight();
-
-        ImGuiViewport *vp = ImGui::GetMainViewport();
-
-        ImGui::SetNextWindowPos(
-            ImVec2(vp->Pos.x, vp->Pos.y + vp->Size.y - footerHeight));
-        ImGui::SetNextWindowSize(
-            ImVec2(vp->Size.x, footerHeight));
-
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-
-        ImGui::Begin("Footer", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
-
-        ImGui::ProgressBar(m_progress, ImVec2(-FLT_MIN, ImGui::GetFrameHeight()), this->updateMessage().c_str());
-
-        ImGui::End();
-
-        ImGui::PopStyleVar();
+        this->drawFooter();
 
         ImGui::Render();
         glViewport(0, 0, 1280, 720);
@@ -156,11 +130,6 @@ void Harbour::App::run()
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
         SDL_GL_SwapWindow(m_window);
     }
-}
-
-void Harbour::App::switchScreens(HarbourGUI::screenID &id)
-{
-    m_screenID = id;
 }
 
 void Harbour::App::drawCurrentScreen()
@@ -194,6 +163,44 @@ void Harbour::App::drawCurrentScreen()
 
 void Harbour::App::drawSplashScreen()
 {
+    ImGui::SetNextWindowPos(ImVec2(0, 0));
+    ImGui::SetNextWindowSize(ImGui::GetIO().DisplaySize);
+
+    ImGui::Begin("SplashScreen", nullptr,
+                 ImGuiWindowFlags_NoDecoration |
+                     ImGuiWindowFlags_NoMove);
+
+    if (!m_splashImg)
+    {
+        int width = 0, height = 0;
+        LoadTextureFromFile("assets/GameCard/UnknownTitle.png", &m_splashImg, &width, &height);
+    }
+
+    ImGui::Image((ImTextureID)(intptr_t)m_splashImg, ImVec2(256, 256));
+
+    ImGui::End();
+}
+
+void Harbour::App::drawFooter()
+{
+    const float footerHeight = ImGui::GetFrameHeight();
+
+    ImGuiViewport *vp = ImGui::GetMainViewport();
+
+    ImGui::SetNextWindowPos(
+        ImVec2(vp->Pos.x, vp->Pos.y + vp->Size.y - footerHeight));
+    ImGui::SetNextWindowSize(
+        ImVec2(vp->Size.x, footerHeight));
+
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+
+    ImGui::Begin("Footer", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
+
+    ImGui::ProgressBar(m_progress, ImVec2(-FLT_MIN, ImGui::GetFrameHeight()), this->updateMessage().c_str());
+
+    ImGui::End();
+
+    ImGui::PopStyleVar();
 }
 
 std::string Harbour::App::updateMessage()
@@ -212,4 +219,14 @@ std::string Harbour::App::updateMessage()
         message = "Download In Progress...";
     }
     return message;
+}
+
+void Harbour::App::initAppClasses()
+{
+    m_fileManager = std::make_unique<HarbourUtils::FileManager>();
+    m_networkManager = std::make_unique<HarbourUtils::NetworkManager>(m_fileManager.get());
+    m_libraryManager = std::make_unique<HarbourUtils::LibraryManager>(m_fileManager.get());
+
+    m_library = m_libraryManager->constructLibraryFromJSON("cache/manifest.json");
+    m_initComplete.store(true);
 }
