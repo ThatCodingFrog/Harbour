@@ -1,7 +1,3 @@
-/*
- * The basis for the App::init(), App::run(), and App::shutdown() came from ChatGPT, but pieces of it have been modified by me (ThatCodingFrog)
- */
-
 #include "App.h"
 #include <iostream>
 
@@ -38,7 +34,7 @@ Harbour::App::~App()
 void Harbour::App::init()
 {
     SDL_Init(SDL_INIT_VIDEO);
-    m_window = SDL_CreateWindow("Harbour of Harkinian",
+    m_window = SDL_CreateWindow("Harbour Ports",
                                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                 1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 

@@ -1,8 +1,6 @@
 #include "MenuScreen.h"
 #include "GameCard.h"
 
-// MyLibraryScreen helped by AI in deciding the parameters after
-// ThatCodingFrog thought of the idea of how to pass data
 void HarbourGUI::MyLibraryScreen(std::vector<Harbour::GameCard> &myLibrary)
 {
 	ImGui::PushFont(NULL, 24.0f);

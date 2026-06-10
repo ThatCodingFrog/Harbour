@@ -25,6 +25,11 @@ std::vector<Harbour::GameCard> HarbourUtils::LibraryManager::constructLibraryFro
 
     std::cout << libJSON.dump(4) << std::endl;
 
+    for (const auto &entry : libJSON)
+    {
+        std::cout << "Entry:" << entry.dump(4) << std::endl;
+    }
+
     return library;
 }
 
