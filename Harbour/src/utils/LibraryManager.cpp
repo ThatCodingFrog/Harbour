@@ -25,10 +25,7 @@ std::vector<Harbour::GameCard> HarbourUtils::LibraryManager::constructLibraryFro
 
     std::cout << libJSON.dump(4) << std::endl;
 
-    for (const auto &entry : libJSON)
-    {
-        std::cout << "Entry:" << entry.dump(4) << std::endl;
-    }
+    recurseJSON(libJSON);
 
     return library;
 }
@@ -41,4 +38,32 @@ Harbour::GameCard HarbourUtils::LibraryManager::makeEntry(nlohmann::json entry)
     }
 
     return Harbour::GameCard();
+}
+
+void HarbourUtils::LibraryManager::recurseJSON(nlohmann::json object)
+{
+    for (const auto &entry : object)
+    {
+        if (entry.is_object())
+        {
+            this->recurseJSON(entry);
+        }
+        else
+        {
+            auto val = entry.get<std::string>();
+            if (val.find(".json") != std::string::npos)
+            {
+                // Skip the harbour.json entry, as it is not a game
+                if (val.find("harbour") != std::string::npos)
+                    continue;
+
+                std::cout << "Found entry: " << val << std::endl;
+
+                // Code to resolve the path to actual JSON file
+                nlohmann::json detailedJSON = m_fileManager->loadConfigFile("cache/ports/" + val);
+
+                this->makeEntry(detailedJSON);
+            }
+        }
+    }
 }
