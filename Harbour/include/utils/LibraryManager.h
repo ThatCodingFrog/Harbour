@@ -19,6 +19,6 @@ namespace HarbourUtils
     private:
         FileManager *m_fileManager = nullptr;
         Harbour::GameCard makeEntry(nlohmann::json entry);
-        void recurseJSON(nlohmann::json json);
+        void recurseJSON(nlohmann::json object, std::vector<Harbour::GameCard> &library);
     };
 }

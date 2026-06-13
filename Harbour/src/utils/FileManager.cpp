@@ -1,5 +1,4 @@
 #include "utils/FileManager.h"
-#include <filesystem>
 #include <fstream>
 #include <iostream>
 #include <exception>
@@ -39,7 +38,7 @@ void HarbourUtils::FileManager::saveConfigFile(const nlohmann::json &config, con
     }
 }
 
-nlohmann::json HarbourUtils::FileManager::loadConfigFile(const std::string &path)
+nlohmann::json HarbourUtils::FileManager::loadConfigFile(const std::filesystem::path &path)
 {
     try
     {
@@ -59,7 +58,7 @@ nlohmann::json HarbourUtils::FileManager::loadConfigFile(const std::string &path
 
     return {};
 }
-bool HarbourUtils::FileManager::unzipArchive(const std::string &path, const std::string &destination)
+bool HarbourUtils::FileManager::unzipArchive(const std::filesystem::path &path, const std::string &destination)
 {
     // Placeholder implementation
     return true;

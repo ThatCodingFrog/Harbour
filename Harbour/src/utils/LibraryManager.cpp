@@ -2,6 +2,7 @@
 #include "utils/FileManager.h"
 
 #include <iostream>
+#include <filesystem>
 
 HarbourUtils::LibraryManager::LibraryManager(HarbourUtils::FileManager *fileManager)
 {
@@ -17,15 +18,13 @@ std::vector<Harbour::GameCard> HarbourUtils::LibraryManager::constructLibraryFro
     std::vector<Harbour::GameCard> library;
 
     nlohmann::json libJSON = m_fileManager->loadConfigFile(path);
-    if (libJSON.empty())
+    if (libJSON.empty() || !libJSON.contains("ports"))
     {
         std::cout << "No library entries found at " << path << ", returning empty library." << std::endl;
         return library;
     }
 
-    std::cout << libJSON.dump(4) << std::endl;
-
-    recurseJSON(libJSON);
+    recurseJSON(libJSON["ports"], library);
 
     return library;
 }
@@ -34,35 +33,41 @@ Harbour::GameCard HarbourUtils::LibraryManager::makeEntry(nlohmann::json entry)
 {
     if (entry.contains("name") && entry.contains("version"))
     {
-        return Harbour::GameCard(entry["name"].get<std::string>(), entry["version"].get<std::string>());
+        Harbour::GameCard card;
+        std::string name = entry["name"].get<std::string>();
+        std::string version = entry["version"].get<std::string>();
+
+        card.setName(name);
+        card.setVersion(version);
+        card.setThumbnailImg("assets/GameCard/UnknownTitle.png");
+        return card;
     }
 
     return Harbour::GameCard();
 }
 
-void HarbourUtils::LibraryManager::recurseJSON(nlohmann::json object)
+void HarbourUtils::LibraryManager::recurseJSON(nlohmann::json object, std::vector<Harbour::GameCard> &library)
 {
-    for (const auto &entry : object)
+    if (!object.is_object() && !object.is_array())
+        return;
+
+    for (auto &entry : object.items())
     {
-        if (entry.is_object())
+        if (entry.key() == "baseURL" || entry.key() == "harbour")
+            continue;
+
+        if (entry.value().is_object() || entry.value().is_array())
+            this->recurseJSON(entry.value(), library);
+        else if (entry.value().is_string())
         {
-            this->recurseJSON(entry);
-        }
-        else
-        {
-            auto val = entry.get<std::string>();
-            if (val.find(".json") != std::string::npos)
+            if (entry.value().get<std::string>().find(".json") != std::string::npos)
             {
-                // Skip the harbour.json entry, as it is not a game
-                if (val.find("harbour") != std::string::npos)
-                    continue;
+                std::filesystem::path resolvedPath = std::filesystem::path("cache/ports") / entry.value().get<std::string>();
 
-                std::cout << "Found entry: " << val << std::endl;
+                nlohmann::json details = m_fileManager->loadConfigFile(resolvedPath);
 
-                // Code to resolve the path to actual JSON file
-                nlohmann::json detailedJSON = m_fileManager->loadConfigFile("cache/ports/" + val);
-
-                this->makeEntry(detailedJSON);
+                Harbour::GameCard card = this->makeEntry(details);
+                library.push_back(card);
             }
         }
     }
