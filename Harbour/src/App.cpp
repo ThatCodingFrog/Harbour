@@ -4,7 +4,7 @@
 #include <glad/glad.h>
 #include "utils/LoadImage.h"
 #include "imgui.h"
-#include "backends/imgui_impl_sdl2.h"
+#include "backends/imgui_impl_sdl3.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "misc/freetype/imgui_freetype.h"
 
@@ -12,7 +12,7 @@
 #include "utils/NetworkManager.h"
 #include "utils/LibraryManager.h"
 
-#include <SDL.h>
+#include <SDL3/SDL.h>
 #include "utils/LoadImage.h"
 
 Harbour::App::App()
@@ -35,7 +35,6 @@ void Harbour::App::init()
 {
     SDL_Init(SDL_INIT_VIDEO);
     m_window = SDL_CreateWindow("Harbour Ports",
-                                SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
                                 1280, 720, SDL_WINDOW_OPENGL); // Allow SDL_WINDOW_RESIZABLE?
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(m_window);
@@ -47,14 +46,14 @@ void Harbour::App::init()
     ImGuiIO &io = ImGui::GetIO();
     io.Fonts->AddFontFromFileTTF("./assets/Fonts/montserrat/Montserrat-Regular.otf", 16.0f);
 
-    ImGui_ImplSDL2_InitForOpenGL(m_window, gl_context);
+    ImGui_ImplSDL3_InitForOpenGL(m_window, gl_context);
     ImGui_ImplOpenGL3_Init("#version 150");
 }
 
 void Harbour::App::shutdown()
 {
     ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
     SDL_DestroyWindow(m_window);
     SDL_Quit();
@@ -67,13 +66,13 @@ void Harbour::App::run()
     {
         while (SDL_PollEvent(&event))
         {
-            ImGui_ImplSDL2_ProcessEvent(&event);
-            if (event.type == SDL_QUIT)
+            ImGui_ImplSDL3_ProcessEvent(&event);
+            if (event.type == SDL_EVENT_QUIT)
                 m_isRunning = false;
         }
 
         ImGui_ImplOpenGL3_NewFrame();
-        ImGui_ImplSDL2_NewFrame();
+        ImGui_ImplSDL3_NewFrame();
         ImGui::NewFrame();
 
         ImGui::SetNextWindowPos(ImVec2(0, 0));

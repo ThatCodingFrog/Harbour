@@ -6,7 +6,7 @@ project(Harbour VERSION 0.1.0 LANGUAGES CXX)
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-find_package(SDL2 CONFIG REQUIRED)
+find_package(SDL3 CONFIG REQUIRED)
 find_package(glad CONFIG REQUIRED)
 find_package(freetype CONFIG REQUIRED)
 find_package(LibArchive REQUIRED)
@@ -34,7 +34,7 @@ add_subdirectory(external/imgui)
 
 target_link_libraries(imgui PRIVATE freetype)
 
-target_link_libraries(Harbour PRIVATE SDL2::SDL2 glad::glad LibArchive::LibArchive)
+target_link_libraries(Harbour PRIVATE SDL3::SDL3 glad::glad LibArchive::LibArchive)
 
 target_link_libraries(Harbour PRIVATE imgui)
 target_link_libraries(Harbour PRIVATE cpr::cpr)

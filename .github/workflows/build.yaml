@@ -1,0 +1,63 @@
+name: Build Harbour Ports
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            artifact-name: harbour-ports-linux
+            executable-path: build/HarbourPorts
+          - os: windows-latest
+            artifact-name: harbour-ports-windows
+            executable-path: build/Release/HarbourPorts.exe
+          - os: macos-latest
+            artifact-name: harbour-ports-macos
+            executable-path: build/HarbourPorts
+
+    steps:
+      # Step 1: Checkout repository code
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2: Set up Ninja build tool for faster builds
+      - name: Setup Ninja
+        uses: xmake-io/github-action-setup-ninja@v1
+
+      # Step 3: Set up vcpkg caching (Speeds up CI runs significantly)
+      - name: Restore vcpkg Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/vcpkg
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          restore-keys: |
+            ${{ runner.os }}-vcpkg-
+
+      # Step 4: Configure CMake
+      - name: Configure CMake
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -G Ninja
+
+      # Step 5: Build the project
+      - name: Build Project
+        run: cmake --build build --config Release
+
+      # Step 6: Upload the built binary as a downloadable artifact
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact-name }}
+          path: ${{ matrix.executable-path }}
+          if-no-files-found: error

@@ -9,7 +9,7 @@ add_library(imgui
     imgui_widgets.cpp
     imgui_tables.cpp
     misc/freetype/imgui_freetype.cpp
-    backends/imgui_impl_sdl2.cpp
+    backends/imgui_impl_sdl3.cpp
     backends/imgui_impl_opengl3.cpp
 )
 

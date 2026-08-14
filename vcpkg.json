@@ -1,8 +1,8 @@
 {
     "name": "harbour",
-    "version-string": "0.1.0",
+    "version-string": "0.2.0",
     "dependencies": [
-        "sdl2",
+        "sdl3",
         "freetype",
         "glad",
         "libarchive",
