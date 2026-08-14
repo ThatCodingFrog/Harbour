@@ -12,6 +12,8 @@ jobs:
   build-matrix:
     name: Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    env:
+      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
 
     strategy:
       fail-fast: false
@@ -33,7 +35,7 @@ jobs:
         with:
           submodules: recursive
 
-      # Setup Ninja build generator
+      # Setup Ninja build generator (your existing install steps)
       - name: Install build tools (Linux)
         if: runner.os == 'Linux'
         run: |
@@ -53,14 +55,7 @@ jobs:
           choco install -y ninja cmake
           refreshenv
 
-      # Configure MSVC for Windows build
-      - name: Configure Developer Command Prompt (Windows)
-        if: runner.os == 'Windows'
-        uses: TheMrMilchmann/setup-msvc-dev@v4
-        with:
-          arch: x64
-
-      # Restore/Save vcpkg Cache
+      # Restore vcpkg Cache
       - name: Restore vcpkg Cache
         uses: actions/cache@v4
         with:
@@ -68,10 +63,34 @@ jobs:
             ~/.cache/vcpkg
             ~/AppData/Local/vcpkg/archives
             ${{ github.workspace }}/build/vcpkg_installed
+            ${{ env.VCPKG_ROOT }}
           key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}-${{ github.sha }}
           restore-keys: |
             ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}-
             ${{ runner.os }}-vcpkg-
+
+      # Bootstrap vcpkg (Linux / macOS)
+      - name: Bootstrap vcpkg (Linux/macOS)
+        if: runner.os != 'Windows'
+        run: |
+          if [ ! -d "${VCPKG_ROOT}" ]; then
+            git clone --depth=1 https://github.com/microsoft/vcpkg.git "${VCPKG_ROOT}"
+          fi
+          pushd "${VCPKG_ROOT}"
+          ./bootstrap-vcpkg.sh -disableMetrics
+          popd
+
+      # Bootstrap vcpkg (Windows)
+      - name: Bootstrap vcpkg (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          if (-not (Test-Path -Path $env:VCPKG_ROOT)) {
+            git clone --depth=1 https://github.com/microsoft/vcpkg.git $env:VCPKG_ROOT
+          }
+          Push-Location $env:VCPKG_ROOT
+          .\bootstrap-vcpkg.bat
+          Pop-Location
 
       # Fast compiler caching (sccache / ccache)
       - name: Configure Compiler Cache
@@ -84,14 +103,42 @@ jobs:
             ${{ runner.os }}-harbour-ccache
           save: ${{ github.ref_name == github.event.repository.default_branch }}
 
-      # Configure CMake
-      - name: Configure CMake
+      # Configure CMake (Linux)
+      - name: Configure CMake (Linux)
+        if: runner.os == 'Linux'
         run: |
           cmake -B build \
-            -GNinja \
+            -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
+            -DVCPKG_TARGET_TRIPLET=x64-linux \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER_LAUNCHER=${{ runner.os == 'Windows' && 'sccache' || 'ccache' }} \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=${{ runner.os == 'Windows' && 'sccache' || 'ccache' }}
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      # Configure CMake (macOS)
+      - name: Configure CMake (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          cmake -B build \
+            -G Ninja \
+            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
+            -DVCPKG_TARGET_TRIPLET=x64-osx \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+
+      # Configure CMake (Windows)
+      - name: Configure CMake (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          cmake -B build `
+            -G Ninja `
+            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake" `
+            -DVCPKG_TARGET_TRIPLET=x64-windows `
+            -DCMAKE_BUILD_TYPE=Release `
+            -DCMAKE_C_COMPILER_LAUNCHER=sccache `
+            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       # Build Project
       - name: Build Harbour Ports
