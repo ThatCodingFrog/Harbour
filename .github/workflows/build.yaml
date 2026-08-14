@@ -1,60 +1,89 @@
-name: Build Harbour Ports
+name: build-harbour-ports
 
 on:
   push:
-    branches: [ "main" ]
   pull_request:
-    branches: [ "main" ]
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
-  build:
-    name: Build on ${{ matrix.os }}
+  build-matrix:
+    name: Build (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-22.04
             artifact-name: harbour-ports-linux
+            executable-path: build/HarbourPorts
+          - os: macos-14
+            artifact-name: harbour-ports-macos
             executable-path: build/HarbourPorts
           - os: windows-latest
             artifact-name: harbour-ports-windows
             executable-path: build/Release/HarbourPorts.exe
-          - os: macos-latest
-            artifact-name: harbour-ports-macos
-            executable-path: build/HarbourPorts
 
     steps:
-      # Step 1: Checkout repository code
-      - name: Checkout Repository
+      - name: Git Checkout
         uses: actions/checkout@v4
+        with:
+          submodules: recursive
 
-      # Step 2: Set up Ninja build tool for faster builds
+      # Setup Ninja build generator
       - name: Setup Ninja
-        uses: xmake-io/github-action-setup-ninja@v1
+        uses: xmake-io/action-setup-ninja@v1
 
-      # Step 3: Set up vcpkg caching (Speeds up CI runs significantly)
+      # Configure MSVC for Windows build
+      - name: Configure Developer Command Prompt (Windows)
+        if: runner.os == 'Windows'
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
+
+      # -------------------------------------------------------------
+      # VCPKG CACHING STEP
+      # -------------------------------------------------------------
       - name: Restore vcpkg Cache
         uses: actions/cache@v4
         with:
-          path: ~/.cache/vcpkg
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
+          path: |
+            ~/.cache/vcpkg
+            ~/AppData/Local/vcpkg/archives
+            ${{ github.workspace }}/build/vcpkg_installed
+          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}-${{ github.sha }}
           restore-keys: |
+            ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}-
             ${{ runner.os }}-vcpkg-
 
-      # Step 4: Configure CMake
+      # Fast compiler caching (sccache / ccache)
+      - name: Configure Compiler Cache
+        uses: hendrikmuhs/ccache-action@v1.2.23
+        with:
+          variant: ${{ runner.os == 'Windows' && 'sccache' || 'ccache' }}
+          key: ${{ runner.os }}-harbour-ccache-${{ github.ref }}-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-harbour-ccache-${{ github.ref }}
+            ${{ runner.os }}-harbour-ccache
+          save: ${{ github.ref_name == github.event.repository.default_branch }}
+
+      # Configure CMake (vcpkg will run automatically if referenced in CMake or toolchain)
       - name: Configure CMake
         run: |
           cmake -B build \
+            -GNinja \
             -DCMAKE_BUILD_TYPE=Release \
-            -G Ninja
+            -DCMAKE_C_COMPILER_LAUNCHER=${{ runner.os == 'Windows' && 'sccache' || 'ccache' }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=${{ runner.os == 'Windows' && 'sccache' || 'ccache' }}
 
-      # Step 5: Build the project
-      - name: Build Project
+      # Build Project
+      - name: Build Harbour Ports
         run: cmake --build build --config Release
 
-      # Step 6: Upload the built binary as a downloadable artifact
+      # Upload Artifacts
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
