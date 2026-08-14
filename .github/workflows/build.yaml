@@ -34,8 +34,24 @@ jobs:
           submodules: recursive
 
       # Setup Ninja build generator
-      - name: Setup Ninja
-        uses: ninja-build/setup-ninja@v5
+      - name: Install build tools (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y ninja-build cmake build-essential
+
+      - name: Install build tools (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew update
+          brew install ninja cmake
+
+      - name: Install build tools (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          choco install -y ninja cmake
+          refreshenv
 
       # Configure MSVC for Windows build
       - name: Configure Developer Command Prompt (Windows)
