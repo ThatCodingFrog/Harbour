@@ -42,6 +42,7 @@
 
 # Editor files
 *.vs/
+*.vscode/
 
 # Building
 build/
@@ -55,4 +56,4 @@ vcpkg_installed/
 CMakeFiles/
 
 # Add cleanup of assets once font is decided better
-# Add cleanup of 11Zip as well, later
+

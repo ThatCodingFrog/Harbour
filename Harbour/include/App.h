@@ -1,17 +1,27 @@
 #pragma once
 
-#include <SDL.h>
-
 #include <string>
 #include <vector>
+#include <memory>
+#include <atomic>
+#include <thread>
 
 #include "GameCard.h"
-#include "utils/FileManager.h"
 #include "MenuScreen.h"
 
+struct SDL_Window;
 
-namespace Harbour {
-	class App {
+namespace HarbourUtils
+{
+	class FileManager;
+	class NetworkManager;
+	class LibraryManager;
+}
+
+namespace Harbour
+{
+	class App
+	{
 	public:
 		App();
 		~App();
@@ -20,13 +30,14 @@ namespace Harbour {
 		void init();
 		void shutdown();
 		void drawCurrentScreen();
+		void drawSplashScreen();
+		void drawFooter();
 
 	public:
 		void run();
-		void switchScreens(HarbourGUI::screenID& id);
 
 	private:
-		SDL_Window* m_window = nullptr;
+		SDL_Window *m_window = nullptr;
 		bool m_isRunning = true;
 		std::vector<GameCard> m_library = {};
 		std::vector<GameCard> m_allGames = {};
@@ -34,11 +45,18 @@ namespace Harbour {
 		int m_screenID = 0;
 
 	private:
-		HarbourUtils::FileManager m_fileManager = {};
-		void constructLibraryFromJSON(std::vector<GameCard>& output, std::string lib);
+		std::unique_ptr<HarbourUtils::FileManager> m_fileManager;
+		std::unique_ptr<HarbourUtils::NetworkManager> m_networkManager;
+		std::unique_ptr<HarbourUtils::LibraryManager> m_libraryManager;
 
 		float m_progress = 0.0f;
 		std::string updateMessage();
 
+		GLuint m_splashImg = 0;
+
+	private:
+		std::thread m_initThread;
+		std::atomic<bool> m_initComplete = false;
+		void initAppClasses();
 	};
 }

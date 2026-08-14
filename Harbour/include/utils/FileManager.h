@@ -1,25 +1,24 @@
 #pragma once
-#include <filesystem>
-#include <fstream>
 #include <string>
 #include <nlohmann/json.hpp>
-#include <curl/curl.h>
+#include "GameCard.h"
+#include <filesystem>
 
-namespace HarbourUtils {
-	class FileManager {
+namespace HarbourUtils
+{
+	class FileManager
+	{
 	public:
-		void createNewDirectory(std::string dir = "test");
-		void writeFile(std::string file, std::string data);
-		std::string readFile(std::string file);
+		FileManager();
+		~FileManager();
 
-		nlohmann::json readJSON(std::string file);
-		std::string makeCURLRequest(const char* url);
+		FileManager *get();
 
-		void checkLatestVersions();
+		void saveConfigFile(const nlohmann::json &config, const std::string &path);
+		nlohmann::json loadConfigFile(const std::filesystem::path &path);
 
-	private:
-		nlohmann::json checkShipVersion();
-		nlohmann::json check2ShipVersion();
-		nlohmann::json checkStarShipVersion();
+		bool fileExists(const std::filesystem::path &path);
+
+		bool unzipArchive(const std::filesystem::path &path, const std::string &destination);
 	};
 }
