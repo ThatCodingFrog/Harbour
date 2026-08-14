@@ -12,6 +12,8 @@ namespace HarbourUtils
         NetworkManager(FileManager *fileManager);
         ~NetworkManager();
 
+        NetworkManager *get();
+
     private:
         std::unique_ptr<DownloadManager> m_downloadManager;
         FileManager *m_fileManager = nullptr;

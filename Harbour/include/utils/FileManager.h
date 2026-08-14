@@ -17,6 +17,8 @@ namespace HarbourUtils
 		void saveConfigFile(const nlohmann::json &config, const std::string &path);
 		nlohmann::json loadConfigFile(const std::filesystem::path &path);
 
+		bool fileExists(const std::filesystem::path &path);
+
 		bool unzipArchive(const std::filesystem::path &path, const std::string &destination);
 	};
 }

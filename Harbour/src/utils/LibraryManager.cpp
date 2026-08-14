@@ -2,7 +2,6 @@
 #include "utils/FileManager.h"
 
 #include <iostream>
-#include <filesystem>
 
 HarbourUtils::LibraryManager::LibraryManager(HarbourUtils::FileManager *fileManager)
 {
@@ -39,7 +38,14 @@ Harbour::GameCard HarbourUtils::LibraryManager::makeEntry(nlohmann::json entry)
 
         card.setName(name);
         card.setVersion(version);
-        card.setThumbnailImg("assets/GameCard/UnknownTitle.png");
+        std::filesystem::path thumbnailPath = "assets/GameCard/" + entry["thumbnail"].get<std::string>();
+        if (this->m_fileManager->fileExists(thumbnailPath))
+            card.setThumbnailImg(thumbnailPath.string());
+        else
+        {
+            card.setThumbnailImg("assets/GameCard/UnknownTitle.png");
+            // Make request, get img
+        }
         return card;
     }
 
@@ -57,18 +63,15 @@ void HarbourUtils::LibraryManager::recurseJSON(nlohmann::json object, std::vecto
             continue;
 
         if (entry.value().is_object() || entry.value().is_array())
-            this->recurseJSON(entry.value(), library);
-        else if (entry.value().is_string())
         {
-            if (entry.value().get<std::string>().find(".json") != std::string::npos)
+            if (entry.value().contains("name") || entry.value().contains("version"))
             {
-                std::filesystem::path resolvedPath = std::filesystem::path("cache/ports") / entry.value().get<std::string>();
-
-                nlohmann::json details = m_fileManager->loadConfigFile(resolvedPath);
-
-                Harbour::GameCard card = this->makeEntry(details);
+                Harbour::GameCard card = makeEntry(entry.value());
                 library.push_back(card);
             }
+            else
+                this->recurseJSON(entry.value(), library);
         }
+        // String values get skipped completely!
     }
 }

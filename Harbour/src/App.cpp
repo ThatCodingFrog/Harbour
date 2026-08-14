@@ -36,7 +36,7 @@ void Harbour::App::init()
     SDL_Init(SDL_INIT_VIDEO);
     m_window = SDL_CreateWindow("Harbour Ports",
                                 SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
-                                1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+                                1280, 720, SDL_WINDOW_OPENGL); // Allow SDL_WINDOW_RESIZABLE?
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(m_window);
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
@@ -223,6 +223,6 @@ void Harbour::App::initAppClasses()
     m_networkManager = std::make_unique<HarbourUtils::NetworkManager>(m_fileManager.get());
     m_libraryManager = std::make_unique<HarbourUtils::LibraryManager>(m_fileManager.get());
 
-    m_library = m_libraryManager->constructLibraryFromJSON("cache/manifest.json");
+    m_allGames = m_libraryManager->constructLibraryFromJSON("cache/manifest.json");
     m_initComplete.store(true);
 }

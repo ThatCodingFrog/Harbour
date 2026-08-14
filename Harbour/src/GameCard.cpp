@@ -61,7 +61,10 @@ void Harbour::GameCard::draw()
 
 	this->drawThumbnail();
 	ImGui::Text(m_name.c_str());
+	ImGui::SameLine();
+	ImGui::PushFont(NULL, 16.0f);
 	ImGui::Text(m_version.c_str());
+	ImGui::PopFont();
 
 	ImGui::EndChild();
 }

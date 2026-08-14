@@ -18,6 +18,11 @@ HarbourUtils::NetworkManager::~NetworkManager()
 {
 }
 
+HarbourUtils::NetworkManager *HarbourUtils::NetworkManager::get()
+{
+    return this;
+}
+
 void HarbourUtils::NetworkManager::checkForManifestUpdate()
 {
     nlohmann::json etags = m_fileManager->loadConfigFile("cache/etags.json");
@@ -30,7 +35,7 @@ void HarbourUtils::NetworkManager::checkForManifestUpdate()
         headers["If-None-Match"] = etags["manifest"].get<std::string>();
     }
 
-    cpr::Url url = "https://raw.githubusercontent.com/ThatCodingFrog/harbour-manifest/main/manifest.json";
+    cpr::Url url = "https://raw.githubusercontent.com/ThatCodingFrog/harbour-manifest/main/manifest-bundled.json";
     cpr::Response r = cpr::Get(url, headers);
 
     if (r.status_code == 304)
@@ -58,46 +63,4 @@ void HarbourUtils::NetworkManager::checkForManifestUpdate()
 
 void HarbourUtils::NetworkManager::checkForSelfUpdate()
 {
-    nlohmann::json etags = m_fileManager->loadConfigFile("cache/etags.json");
-    nlohmann::json manifest = m_fileManager->loadConfigFile("cache/manifest.json");
-
-    cpr::Header headers = {
-        {"Expect", ""}};
-
-    if (etags.contains("harbour"))
-    {
-        headers["If-None-Match"] = etags["harbour"].get<std::string>();
-    }
-
-    // Validate manifest is loaded and has required keys
-    if (manifest.is_null() || manifest.empty() || !manifest.contains("baseURL"))
-    {
-        std::cerr << "Manifest is invalid or missing required keys" << std::endl;
-        return;
-    }
-
-    cpr::Url url = manifest["baseURL"].get<std::string>() + manifest["ports"]["harbour"].get<std::string>();
-    cpr::Response r = cpr::Get(url, headers);
-
-    if (r.status_code == 304)
-    {
-        std::cout << "No updates available" << std::endl;
-        return;
-    }
-    else if (r.status_code != 200)
-    {
-        std::cerr << "Error while checking for self update: " << r.status_code << std::endl;
-        return;
-    }
-
-    std::string harbourETag = r.header["ETag"];
-    if (!harbourETag.empty())
-    {
-        etags["harbour"] = harbourETag;
-        m_fileManager->saveConfigFile(etags, "cache/etags.json");
-    }
-
-    nlohmann::json harbourInfo = nlohmann::json::parse(r.text);
-
-    m_fileManager->saveConfigFile(harbourInfo, "cache/harbour.json");
 }

@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <exception>
+#include <archive.h>
 
 namespace fs = std::filesystem;
 
@@ -58,8 +59,22 @@ nlohmann::json HarbourUtils::FileManager::loadConfigFile(const std::filesystem::
 
     return {};
 }
+
+bool HarbourUtils::FileManager::fileExists(const std::filesystem::path &path)
+{
+    if (fs::exists(path) && fs::is_regular_file(path))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 bool HarbourUtils::FileManager::unzipArchive(const std::filesystem::path &path, const std::string &destination)
 {
     // Placeholder implementation
+    // Use libarchive
     return true;
 }
