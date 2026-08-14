@@ -22,12 +22,15 @@ jobs:
           - os: ubuntu-22.04
             artifact-name: harbour-ports-linux
             executable-path: build/HarbourPorts
+            vcpkg_triplet: x64-linux
           - os: macos-14
             artifact-name: harbour-ports-macos
             executable-path: build/HarbourPorts
+            vcpkg_triplet: x64-osx
           - os: windows-latest
             artifact-name: harbour-ports-windows
             executable-path: build/Release/HarbourPorts.exe
+            vcpkg_triplet: x64-windows
 
     steps:
       - name: Git Checkout
@@ -35,27 +38,36 @@ jobs:
         with:
           submodules: recursive
 
-      # Setup Ninja build generator (your existing install steps)
-      - name: Install build tools (Linux)
+      # Install system build tools and dependencies per-OS
+      - name: Install system packages (Linux)
         if: runner.os == 'Linux'
         run: |
           sudo apt-get update
-          sudo apt-get install -y ninja-build cmake build-essential
+          sudo apt-get install -y \
+            ninja-build cmake build-essential pkg-config autoconf automake libtool python3 python3-pip \ 
+            linux-libc-dev ca-certificates curl unzip git
 
-      - name: Install build tools (macOS)
+      - name: Install system packages (macOS)
         if: runner.os == 'macOS'
         run: |
           brew update
-          brew install ninja cmake
+          brew install ninja cmake pkg-config autoconf automake libtool python
 
-      - name: Install build tools (Windows)
+      - name: Install system packages (Windows)
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          choco install -y ninja cmake
+          choco install -y ninja cmake python3 7zip git
           refreshenv
 
-      # Restore vcpkg Cache
+      # Ensure MSVC developer environment on Windows (so CMake picks MSVC)
+      - name: Configure Developer Command Prompt (Windows)
+        if: runner.os == 'Windows'
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
+
+      # Restore vcpkg Cache (include triplet in key)
       - name: Restore vcpkg Cache
         uses: actions/cache@v4
         with:
@@ -64,9 +76,10 @@ jobs:
             ~/AppData/Local/vcpkg/archives
             ${{ github.workspace }}/build/vcpkg_installed
             ${{ env.VCPKG_ROOT }}
-          key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}-${{ github.sha }}
+          key: ${{ runner.os }}-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles('**/vcpkg.json') }}-${{ github.sha }}
           restore-keys: |
-            ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}-
+            ${{ runner.os }}-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles('**/vcpkg.json') }}-
+            ${{ runner.os }}-vcpkg-${{ matrix.vcpkg_triplet }}-
             ${{ runner.os }}-vcpkg-
 
       # Bootstrap vcpkg (Linux / macOS)
@@ -92,6 +105,16 @@ jobs:
           .\bootstrap-vcpkg.bat
           Pop-Location
 
+      # Run explicit vcpkg install for the manifest/triplet so failures surface early
+      - name: vcpkg install (explicit)
+        run: |
+          echo "Installing vcpkg packages for triplet: ${{ matrix.vcpkg_triplet }}"
+          if [ "${{ runner.os }}" = "Windows" ]; then
+            pwsh -Command "& \"$env:VCPKG_ROOT\\vcpkg.exe\" install --triplet ${{ matrix.vcpkg_triplet }}"
+          else
+            "${VCPKG_ROOT}/vcpkg" install --triplet ${{ matrix.vcpkg_triplet }}
+          fi
+
       # Fast compiler caching (sccache / ccache)
       - name: Configure Compiler Cache
         uses: hendrikmuhs/ccache-action@v1.2.23
@@ -103,46 +126,39 @@ jobs:
             ${{ runner.os }}-harbour-ccache
           save: ${{ github.ref_name == github.event.repository.default_branch }}
 
-      # Configure CMake (Linux)
-      - name: Configure CMake (Linux)
-        if: runner.os == 'Linux'
+      # Configure CMake (Linux/macOS/Windows) - use triplet from matrix and vcpkg toolchain
+      - name: Configure CMake (all)
+        shell: bash
         run: |
-          cmake -B build \
+          set -euo pipefail
+          echo "Configuring CMake (triplet=${{ matrix.vcpkg_triplet }})"
+          cmake -S . -B build \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
-            -DVCPKG_TARGET_TRIPLET=x64-linux \
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+            -DCMAKE_C_COMPILER_LAUNCHER=$(if [ "${{ runner.os }}" = "Windows" ]; then echo sccache; else echo ccache; fi) \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=$(if [ "${{ runner.os }}" = "Windows" ]; then echo sccache; else echo ccache; fi)
+        env:
+          VCPKG_ROOT: ${{ env.VCPKG_ROOT }}
+        if: runner.os != 'Windows'
 
-      # Configure CMake (macOS)
-      - name: Configure CMake (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          cmake -B build \
-            -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
-            -DVCPKG_TARGET_TRIPLET=x64-osx \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-
-      # Configure CMake (Windows)
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          cmake -B build `
+          $env:VCPKG_ROOT = $Env:VCPKG_ROOT
+          cmake -S . -B build `
             -G Ninja `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake" `
-            -DVCPKG_TARGET_TRIPLET=x64-windows `
+            -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} `
             -DCMAKE_BUILD_TYPE=Release `
             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
       # Build Project
       - name: Build Harbour Ports
-        run: cmake --build build --config Release
+        run: cmake --build build --config Release -- -j
 
       # Upload Artifacts
       - name: Upload Build Artifact
