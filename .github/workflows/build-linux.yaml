@@ -9,7 +9,7 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  build-windows:
+  build-linux:
     runs-on: ubuntu-22.04
     steps:
       - name: Git Checkout
@@ -25,6 +25,10 @@ jobs:
           key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
           restore-keys: |
             ${{ runner.os }}-vcpkg-
+
+      - name: Get other dependencies
+        run: |
+          sudo apt install -y autoconf autoconf-archive automake libtoolize
 
       - name: Run Build commands
         run: |
