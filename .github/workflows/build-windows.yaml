@@ -9,23 +9,24 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  steps:
-    - name: Git Checkout
-      uses: actions/checkout@v6
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Git Checkout
+        uses: actions/checkout@v6
 
-    - name: Set up MSVC
-      uses: TheMrMilchmann/setup-msvc-dev@v4
-      with:
-        arch: x64
+      - name: Set up MSVC
+        uses: TheMrMilchmann/setup-msvc-dev@v4
+        with:
+          arch: x64
 
-    - name: Run Build commands
-      run: |
-        buildWindows-release.bat
+      - name: Run Build commands
+        run: |
+          buildWindows-release.bat
 
-    - name: Upload Build Artifact
-      uses: actions/upload-artifact@v4
-      with:
-        name: harbour-windows
-        path: build/Release/
-        if-no-files-found: error
-        
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: harbour-windows
+          path: build/Release/
+          if-no-files-found: error
