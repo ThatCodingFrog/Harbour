@@ -44,7 +44,7 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y \
-            ninja-build cmake build-essential pkg-config autoconf automake libtool python3 python3-pip \ 
+            ninja-build cmake build-essential pkg-config autoconf automake libtool python3 python3-pip \
             linux-libc-dev ca-certificates curl unzip git
 
       - name: Install system packages (macOS)
@@ -98,6 +98,8 @@ jobs:
         if: runner.os == 'Windows'
         shell: powershell
         run: |
+          # Force vcpkg into the workspace to avoid VS-provided paths
+          $env:VCPKG_ROOT = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
           if (-not (Test-Path -Path $env:VCPKG_ROOT)) {
             git clone --depth=1 https://github.com/microsoft/vcpkg.git $env:VCPKG_ROOT
           }
@@ -105,15 +107,22 @@ jobs:
           .\bootstrap-vcpkg.bat
           Pop-Location
 
-      # Run explicit vcpkg install for the manifest/triplet so failures surface early
-      - name: vcpkg install (explicit)
+      # Run explicit vcpkg install for the manifest/triplet so failures surface early (Linux/macOS)
+      - name: vcpkg install (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
           echo "Installing vcpkg packages for triplet: ${{ matrix.vcpkg_triplet }}"
-          if [ "${{ runner.os }}" = "Windows" ]; then
-            pwsh -Command "& \"$env:VCPKG_ROOT\\vcpkg.exe\" install --triplet ${{ matrix.vcpkg_triplet }}"
-          else
-            "${VCPKG_ROOT}/vcpkg" install --triplet ${{ matrix.vcpkg_triplet }}
-          fi
+          "${VCPKG_ROOT}/vcpkg" install --triplet ${{ matrix.vcpkg_triplet }}
+
+      # Run explicit vcpkg install for Windows (PowerShell)
+      - name: vcpkg install (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $v = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
+          Push-Location $v
+          .\vcpkg.exe install --triplet ${{ matrix.vcpkg_triplet }}
+          Pop-Location
 
       # Fast compiler caching (sccache / ccache)
       - name: Configure Compiler Cache
@@ -126,28 +135,26 @@ jobs:
             ${{ runner.os }}-harbour-ccache
           save: ${{ github.ref_name == github.event.repository.default_branch }}
 
-      # Configure CMake (Linux/macOS/Windows) - use triplet from matrix and vcpkg toolchain
-      - name: Configure CMake (all)
-        shell: bash
+      # Configure CMake (Linux/macOS)
+      - name: Configure CMake (Linux/macOS)
+        if: runner.os != 'Windows'
         run: |
-          set -euo pipefail
-          echo "Configuring CMake (triplet=${{ matrix.vcpkg_triplet }})"
           cmake -S . -B build \
             -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
             -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} \
             -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER_LAUNCHER=$(if [ "${{ runner.os }}" = "Windows" ]; then echo sccache; else echo ccache; fi) \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=$(if [ "${{ runner.os }}" = "Windows" ]; then echo sccache; else echo ccache; fi)
+            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
         env:
           VCPKG_ROOT: ${{ env.VCPKG_ROOT }}
-        if: runner.os != 'Windows'
 
+      # Configure CMake (Windows)
       - name: Configure CMake (Windows)
         if: runner.os == 'Windows'
         shell: powershell
         run: |
-          $env:VCPKG_ROOT = $Env:VCPKG_ROOT
+          $env:VCPKG_ROOT = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
           cmake -S . -B build `
             -G Ninja `
             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake" `
@@ -156,9 +163,25 @@ jobs:
             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
-      # Build Project
-      - name: Build Harbour Ports
-        run: cmake --build build --config Release -- -j
+      # Build Project (Linux)
+      - name: Build Harbour Ports (Linux)
+        if: runner.os == 'Linux'
+        run: |
+          cmake --build build --config Release --parallel $(nproc)
+
+      # Build Project (macOS)
+      - name: Build Harbour Ports (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          cmake --build build --config Release --parallel "$(sysctl -n hw.ncpu)"
+
+      # Build Project (Windows)
+      - name: Build Harbour Ports (Windows)
+        if: runner.os == 'Windows'
+        shell: powershell
+        run: |
+          $env:VCPKG_ROOT = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
+          cmake --build build --config Release --parallel $Env:NUMBER_OF_PROCESSORS
 
       # Upload Artifacts
       - name: Upload Build Artifact
