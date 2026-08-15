@@ -1,19 +1,21 @@
 #!/bin/bash
 
-# 1. Run initial CMake setup
+# Stop at first error
+set -e
+
 cmake -P ./CMake/setup_vcpkg.cmake
 
-# 2. Set environment variables (no spaces around '=')
 export VCPKG_FEATURE_FLAGS="manifests"
+export VCPKG_FORCE_SYSTEM_BINARIES=1
 
-# 3. Run vcpkg (assuming the Linux/macOS binary 'vcpkg' exists there)
+chmod +x "./external/vcpkg/vcpkg"
 "./external/vcpkg/vcpkg" install
 
-# 4. Check if Ninja is in PATH
+# Check if Ninja is in PATH
 if command -v ninja >/dev/null 2>&1; then
     echo "Ninja is already installed."
 else
-    # 5. Download and install Ninja for Linux
+    # Download and install Ninja for Linux
     echo "Installing Ninja..."
     # Using curl (standard on most systems)
     curl -LO https://github.com/ninja-build/ninja/releases/latest/download/ninja-linux.zip
@@ -26,7 +28,7 @@ else
     # Make sure the binary is executable
     chmod +x "./external/ninja/ninja"
 
-    # 6. Add to PATH for this session
+    # Add to PATH for this session
     export PATH="$PWD/external/ninja:$PATH"
 fi
 
