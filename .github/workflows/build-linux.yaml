@@ -1,4 +1,4 @@
-name: build-harbour-ports-windows
+name: build-harbour-ports-linux
 
 on:
   push:
@@ -10,21 +10,16 @@ concurrency:
 
 jobs:
   build-windows:
-    runs-on: windows-latest
+    runs-on: ubuntu-22.04
     steps:
       - name: Git Checkout
         uses: actions/checkout@v6
-
-      - name: Set up MSVC
-        uses: TheMrMilchmann/setup-msvc-dev@v4
-        with:
-          arch: x64
 
       - name: Restore vcpkg Cache
         uses: actions/cache@v4
         with:
           path: |
-            ~/AppData/Local/vcpkg/archives
+            ~/.cache/vcpkg
             ${{ github.workspace }}/vcpkg_installed
             ${{ github.workspace }}/external/vcpkg
           key: ${{ runner.os }}-vcpkg-${{ hashFiles('**/vcpkg.json') }}
@@ -32,13 +27,13 @@ jobs:
             ${{ runner.os }}-vcpkg-
 
       - name: Run Build commands
-        shell: cmd
         run: |
-          .\buildWindows-release.bat
+          chmod +x ./buildLinux-release.sh
+          ./buildLinux-release.sh
 
       - name: Upload Build Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: harbour-windows
+          name: harbour-linux
           path: build/Release/
           if-no-files-found: error

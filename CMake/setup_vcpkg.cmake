@@ -1,5 +1,3 @@
-# Created by ChatGPT
-
 # --- CMake/setup_vcpkg.cmake ---
 cmake_minimum_required(VERSION 3.16)
 
@@ -21,14 +19,14 @@ if(NOT EXISTS "${VCPKG_ROOT}/.vcpkg-root")
         message(FATAL_ERROR "Failed to clone vcpkg. Please check your network connection or git setup.")
     endif()
 
-    # Bootstrap vcpkg (this builds the vcpkg.exe or vcpkg binary)
+    # Bootstrap vcpkg (this builds the vcpkg binary)
     message(STATUS "Bootstrapping vcpkg...")
     if(WIN32)
         execute_process(COMMAND "${VCPKG_ROOT}/bootstrap-vcpkg.bat"
                         WORKING_DIRECTORY "${VCPKG_ROOT}"
                         RESULT_VARIABLE BOOTSTRAP_RESULT)
     else()
-        execute_process(COMMAND "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
+        execute_process(COMMAND sh "${VCPKG_ROOT}/bootstrap-vcpkg.sh"
                         WORKING_DIRECTORY "${VCPKG_ROOT}"
                         RESULT_VARIABLE BOOTSTRAP_RESULT)
     endif()
