@@ -6,12 +6,6 @@
         "freetype",
         "glad",
         "libarchive",
-        {
-            "name": "cpr",
-            "default-features": false,
-            "features": [
-                "ssl"
-            ]
-        }
+        "cpr"
     ]
 }

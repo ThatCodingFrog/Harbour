@@ -33,7 +33,7 @@ jobs:
 
       - name: Get other dependencies
         run: |
-          sudo apt install -y ninja-build autoconf autoconf-archive automake libtool libdbus-1-dev pkg-config
+          sudo apt install -y ninja-build autoconf autoconf-archive automake libtool libdbus-1-dev pkg-config libssl-dev libcurl4-openssl-dev
 
       - name: Run Build commands
         run: |

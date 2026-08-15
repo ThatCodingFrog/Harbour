@@ -7,9 +7,6 @@ cmake -P ./CMake/setup_vcpkg.cmake
 
 export VCPKG_FEATURE_FLAGS="manifests"
 export VCPKG_FORCE_SYSTEM_BINARIES=1
-export CMAKE=$(which cmake)
-
-rm -rf "./external/vcpkg/downloads/tools"
 
 chmod +x "./external/vcpkg/vcpkg"
 "./external/vcpkg/vcpkg" install
