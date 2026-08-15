@@ -1,192 +1,192 @@
-name: build-harbour-ports
+# name: build-harbour-ports
 
-on:
-  push:
-  pull_request:
+# on:
+#   push:
+#   pull_request:
 
-concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+# concurrency:
+#   group: ${{ github.workflow }}-${{ github.ref }}
+#   cancel-in-progress: true
 
-jobs:
-  build-matrix:
-    name: Build (${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
-    env:
-      VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+# jobs:
+#   build-matrix:
+#     name: Build (${{ matrix.os }})
+#     runs-on: ${{ matrix.os }}
+#     env:
+#       VCPKG_ROOT: ${{ github.workspace }}/vcpkg
 
-    strategy:
-      fail-fast: false
-      matrix:
-        include:
-          - os: ubuntu-22.04
-            artifact-name: harbour-ports-linux
-            executable-path: build/HarbourPorts
-            vcpkg_triplet: x64-linux
-          - os: macos-14
-            artifact-name: harbour-ports-macos
-            executable-path: build/HarbourPorts
-            vcpkg_triplet: x64-osx
-          - os: windows-latest
-            artifact-name: harbour-ports-windows
-            executable-path: build/Release/HarbourPorts.exe
-            vcpkg_triplet: x64-windows
+#     strategy:
+#       fail-fast: false
+#       matrix:
+#         include:
+#           - os: ubuntu-22.04
+#             artifact-name: harbour-ports-linux
+#             executable-path: build/HarbourPorts
+#             vcpkg_triplet: x64-linux
+#           - os: macos-14
+#             artifact-name: harbour-ports-macos
+#             executable-path: build/HarbourPorts
+#             vcpkg_triplet: x64-osx
+#           - os: windows-latest
+#             artifact-name: harbour-ports-windows
+#             executable-path: build/Release/HarbourPorts.exe
+#             vcpkg_triplet: x64-windows
 
-    steps:
-      - name: Git Checkout
-        uses: actions/checkout@v4
-        with:
-          submodules: recursive
+#     steps:
+#       - name: Git Checkout
+#         uses: actions/checkout@v4
+#         with:
+#           submodules: recursive
 
-      # Install system build tools and dependencies per-OS
-      - name: Install system packages (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y \
-            ninja-build cmake build-essential pkg-config autoconf automake libtool python3 python3-pip \
-            linux-libc-dev ca-certificates curl unzip git
+#       # Install system build tools and dependencies per-OS
+#       - name: Install system packages (Linux)
+#         if: runner.os == 'Linux'
+#         run: |
+#           sudo apt-get update
+#           sudo apt-get install -y \
+#             ninja-build cmake build-essential pkg-config autoconf automake libtool python3 python3-pip \
+#             linux-libc-dev ca-certificates curl unzip git
 
-      - name: Install system packages (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          brew update
-          brew install ninja cmake pkg-config autoconf automake libtool python
+#       - name: Install system packages (macOS)
+#         if: runner.os == 'macOS'
+#         run: |
+#           brew update
+#           brew install ninja cmake pkg-config autoconf automake libtool python
 
-      - name: Install system packages (Windows)
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          choco install -y ninja cmake python3 7zip git
-          refreshenv
+#       - name: Install system packages (Windows)
+#         if: runner.os == 'Windows'
+#         shell: powershell
+#         run: |
+#           choco install -y ninja cmake python3 7zip git
+#           refreshenv
 
-      # Ensure MSVC developer environment on Windows (so CMake picks MSVC)
-      - name: Configure Developer Command Prompt (Windows)
-        if: runner.os == 'Windows'
-        uses: TheMrMilchmann/setup-msvc-dev@v4
-        with:
-          arch: x64
+#       # Ensure MSVC developer environment on Windows (so CMake picks MSVC)
+#       - name: Configure Developer Command Prompt (Windows)
+#         if: runner.os == 'Windows'
+#         uses: TheMrMilchmann/setup-msvc-dev@v4
+#         with:
+#           arch: x64
 
-      # Restore vcpkg Cache (include triplet in key)
-      - name: Restore vcpkg Cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.cache/vcpkg
-            ~/AppData/Local/vcpkg/archives
-            ${{ github.workspace }}/build/vcpkg_installed
-            ${{ env.VCPKG_ROOT }}
-          key: ${{ runner.os }}-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles('**/vcpkg.json') }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles('**/vcpkg.json') }}-
-            ${{ runner.os }}-vcpkg-${{ matrix.vcpkg_triplet }}-
-            ${{ runner.os }}-vcpkg-
+#       # Restore vcpkg Cache (include triplet in key)
+#       - name: Restore vcpkg Cache
+#         uses: actions/cache@v4
+#         with:
+#           path: |
+#             ~/.cache/vcpkg
+#             ~/AppData/Local/vcpkg/archives
+#             ${{ github.workspace }}/build/vcpkg_installed
+#             ${{ env.VCPKG_ROOT }}
+#           key: ${{ runner.os }}-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles('**/vcpkg.json') }}-${{ github.sha }}
+#           restore-keys: |
+#             ${{ runner.os }}-vcpkg-${{ matrix.vcpkg_triplet }}-${{ hashFiles('**/vcpkg.json') }}-
+#             ${{ runner.os }}-vcpkg-${{ matrix.vcpkg_triplet }}-
+#             ${{ runner.os }}-vcpkg-
 
-      # Bootstrap vcpkg (Linux / macOS)
-      - name: Bootstrap vcpkg (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          if [ ! -d "${VCPKG_ROOT}" ]; then
-            git clone --depth=1 https://github.com/microsoft/vcpkg.git "${VCPKG_ROOT}"
-          fi
-          pushd "${VCPKG_ROOT}"
-          ./bootstrap-vcpkg.sh -disableMetrics
-          popd
+#       # Bootstrap vcpkg (Linux / macOS)
+#       - name: Bootstrap vcpkg (Linux/macOS)
+#         if: runner.os != 'Windows'
+#         run: |
+#           if [ ! -d "${VCPKG_ROOT}" ]; then
+#             git clone --depth=1 https://github.com/microsoft/vcpkg.git "${VCPKG_ROOT}"
+#           fi
+#           pushd "${VCPKG_ROOT}"
+#           ./bootstrap-vcpkg.sh -disableMetrics
+#           popd
 
-      # Bootstrap vcpkg (Windows)
-      - name: Bootstrap vcpkg (Windows)
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          # Force vcpkg into the workspace to avoid VS-provided paths
-          $env:VCPKG_ROOT = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
-          if (-not (Test-Path -Path $env:VCPKG_ROOT)) {
-            git clone --depth=1 https://github.com/microsoft/vcpkg.git $env:VCPKG_ROOT
-          }
-          Push-Location $env:VCPKG_ROOT
-          .\bootstrap-vcpkg.bat
-          Pop-Location
+#       # Bootstrap vcpkg (Windows)
+#       - name: Bootstrap vcpkg (Windows)
+#         if: runner.os == 'Windows'
+#         shell: powershell
+#         run: |
+#           # Force vcpkg into the workspace to avoid VS-provided paths
+#           $env:VCPKG_ROOT = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
+#           if (-not (Test-Path -Path $env:VCPKG_ROOT)) {
+#             git clone --depth=1 https://github.com/microsoft/vcpkg.git $env:VCPKG_ROOT
+#           }
+#           Push-Location $env:VCPKG_ROOT
+#           .\bootstrap-vcpkg.bat
+#           Pop-Location
 
-      # Run explicit vcpkg install for the manifest/triplet so failures surface early (Linux/macOS)
-      - name: vcpkg install (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          echo "Installing vcpkg packages for triplet: ${{ matrix.vcpkg_triplet }}"
-          "${VCPKG_ROOT}/vcpkg" install --triplet ${{ matrix.vcpkg_triplet }}
+#       # Run explicit vcpkg install for the manifest/triplet so failures surface early (Linux/macOS)
+#       - name: vcpkg install (Linux/macOS)
+#         if: runner.os != 'Windows'
+#         run: |
+#           echo "Installing vcpkg packages for triplet: ${{ matrix.vcpkg_triplet }}"
+#           "${VCPKG_ROOT}/vcpkg" install --triplet ${{ matrix.vcpkg_triplet }}
 
-      # Run explicit vcpkg install for Windows (PowerShell)
-      - name: vcpkg install (Windows)
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          $v = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
-          Push-Location $v
-          .\vcpkg.exe install --triplet ${{ matrix.vcpkg_triplet }}
-          Pop-Location
+#       # Run explicit vcpkg install for Windows (PowerShell)
+#       - name: vcpkg install (Windows)
+#         if: runner.os == 'Windows'
+#         shell: powershell
+#         run: |
+#           $v = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
+#           Push-Location $v
+#           .\vcpkg.exe install --triplet ${{ matrix.vcpkg_triplet }}
+#           Pop-Location
 
-      # Fast compiler caching (sccache / ccache)
-      - name: Configure Compiler Cache
-        uses: hendrikmuhs/ccache-action@v1.2.23
-        with:
-          variant: ${{ runner.os == 'Windows' && 'sccache' || 'ccache' }}
-          key: ${{ runner.os }}-harbour-ccache-${{ github.ref }}-${{ github.sha }}
-          restore-keys: |
-            ${{ runner.os }}-harbour-ccache-${{ github.ref }}
-            ${{ runner.os }}-harbour-ccache
-          save: ${{ github.ref_name == github.event.repository.default_branch }}
+#       # Fast compiler caching (sccache / ccache)
+#       - name: Configure Compiler Cache
+#         uses: hendrikmuhs/ccache-action@v1.2.23
+#         with:
+#           variant: ${{ runner.os == 'Windows' && 'sccache' || 'ccache' }}
+#           key: ${{ runner.os }}-harbour-ccache-${{ github.ref }}-${{ github.sha }}
+#           restore-keys: |
+#             ${{ runner.os }}-harbour-ccache-${{ github.ref }}
+#             ${{ runner.os }}-harbour-ccache
+#           save: ${{ github.ref_name == github.event.repository.default_branch }}
 
-      # Configure CMake (Linux/macOS)
-      - name: Configure CMake (Linux/macOS)
-        if: runner.os != 'Windows'
-        run: |
-          cmake -S . -B build \
-            -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
-            -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} \
-            -DCMAKE_BUILD_TYPE=Release \
-            -DCMAKE_C_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-        env:
-          VCPKG_ROOT: ${{ env.VCPKG_ROOT }}
+#       # Configure CMake (Linux/macOS)
+#       - name: Configure CMake (Linux/macOS)
+#         if: runner.os != 'Windows'
+#         run: |
+#           cmake -S . -B build \
+#             -G Ninja \
+#             -DCMAKE_TOOLCHAIN_FILE="${VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake" \
+#             -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} \
+#             -DCMAKE_BUILD_TYPE=Release \
+#             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
+#             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+#         env:
+#           VCPKG_ROOT: ${{ env.VCPKG_ROOT }}
 
-      # Configure CMake (Windows)
-      - name: Configure CMake (Windows)
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          $env:VCPKG_ROOT = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
-          cmake -S . -B build `
-            -G Ninja `
-            -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake" `
-            -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} `
-            -DCMAKE_BUILD_TYPE=Release `
-            -DCMAKE_C_COMPILER_LAUNCHER=sccache `
-            -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
+#       # Configure CMake (Windows)
+#       - name: Configure CMake (Windows)
+#         if: runner.os == 'Windows'
+#         shell: powershell
+#         run: |
+#           $env:VCPKG_ROOT = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
+#           cmake -S . -B build `
+#             -G Ninja `
+#             -DCMAKE_TOOLCHAIN_FILE="$env:VCPKG_ROOT\scripts\buildsystems\vcpkg.cmake" `
+#             -DVCPKG_TARGET_TRIPLET=${{ matrix.vcpkg_triplet }} `
+#             -DCMAKE_BUILD_TYPE=Release `
+#             -DCMAKE_C_COMPILER_LAUNCHER=sccache `
+#             -DCMAKE_CXX_COMPILER_LAUNCHER=sccache
 
-      # Build Project (Linux)
-      - name: Build Harbour Ports (Linux)
-        if: runner.os == 'Linux'
-        run: |
-          cmake --build build --config Release --parallel $(nproc)
+#       # Build Project (Linux)
+#       - name: Build Harbour Ports (Linux)
+#         if: runner.os == 'Linux'
+#         run: |
+#           cmake --build build --config Release --parallel $(nproc)
 
-      # Build Project (macOS)
-      - name: Build Harbour Ports (macOS)
-        if: runner.os == 'macOS'
-        run: |
-          cmake --build build --config Release --parallel "$(sysctl -n hw.ncpu)"
+#       # Build Project (macOS)
+#       - name: Build Harbour Ports (macOS)
+#         if: runner.os == 'macOS'
+#         run: |
+#           cmake --build build --config Release --parallel "$(sysctl -n hw.ncpu)"
 
-      # Build Project (Windows)
-      - name: Build Harbour Ports (Windows)
-        if: runner.os == 'Windows'
-        shell: powershell
-        run: |
-          $env:VCPKG_ROOT = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
-          cmake --build build --config Release --parallel $Env:NUMBER_OF_PROCESSORS
+#       # Build Project (Windows)
+#       - name: Build Harbour Ports (Windows)
+#         if: runner.os == 'Windows'
+#         shell: powershell
+#         run: |
+#           $env:VCPKG_ROOT = Join-Path $Env:GITHUB_WORKSPACE 'vcpkg'
+#           cmake --build build --config Release --parallel $Env:NUMBER_OF_PROCESSORS
 
-      # Upload Artifacts
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.artifact-name }}
-          path: ${{ matrix.executable-path }}
-          if-no-files-found: error
+#       # Upload Artifacts
+#       - name: Upload Build Artifact
+#         uses: actions/upload-artifact@v4
+#         with:
+#           name: ${{ matrix.artifact-name }}
+#           path: ${{ matrix.executable-path }}
+#           if-no-files-found: error

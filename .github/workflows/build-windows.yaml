@@ -1,0 +1,31 @@
+name: build-harbour-ports-windows
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  steps:
+    - name: Git Checkout
+      uses: actions/checkout@v6
+
+    - name: Set up MSVC
+      uses: TheMrMilchmann/setup-msvc-dev@v4
+      with:
+        arch: x64
+
+    - name: Run Build commands
+      run: |
+        buildWindows-release.bat
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: harbour-windows
+        path: build/Release/
+        if-no-files-found: error
+        
