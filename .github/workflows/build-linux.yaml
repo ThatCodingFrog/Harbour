@@ -28,7 +28,7 @@ jobs:
 
       - name: Get other dependencies
         run: |
-          sudo apt install -y autoconf autoconf-archive automake libtool
+          sudo apt install -y ninja-build autoconf autoconf-archive automake libtool libdbus-1-dev pkg-config
 
       - name: Run Build commands
         run: |
