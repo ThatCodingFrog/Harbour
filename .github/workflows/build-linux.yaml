@@ -28,7 +28,7 @@ jobs:
 
       - name: Get other dependencies
         run: |
-          sudo apt install -y autoconf autoconf-archive automake libtoolize
+          sudo apt install -y autoconf autoconf-archive automake libtool
 
       - name: Run Build commands
         run: |
