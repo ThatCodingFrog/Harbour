@@ -4,10 +4,10 @@
 #include <exception>
 #include <archive.h>
 
-namespace fs = std::filesystem;
-
 HarbourUtils::FileManager::FileManager()
 {
+    this->directoryExists("cache/downloads", true); // Creates cache/downloads/ folder for downloaded archives to be put in
+    this->directoryExists("games", true);
 }
 
 HarbourUtils::FileManager::~FileManager()
@@ -19,12 +19,11 @@ HarbourUtils::FileManager *HarbourUtils::FileManager::get()
     return this;
 }
 
-void HarbourUtils::FileManager::saveConfigFile(const nlohmann::json &config, const std::string &path)
+void HarbourUtils::FileManager::saveConfigFile(const nlohmann::json &config, const fs::path &path)
 {
-    fs::path filePath(path);
-    if (!filePath.parent_path().empty() && !fs::exists(filePath.parent_path()))
+    if (!path.parent_path().empty() && !fs::exists(path.parent_path()))
     {
-        fs::create_directories(filePath.parent_path());
+        fs::create_directories(path.parent_path());
     }
 
     std::ofstream stream(path, std::ios::out | std::ios::trunc);
@@ -39,7 +38,7 @@ void HarbourUtils::FileManager::saveConfigFile(const nlohmann::json &config, con
     }
 }
 
-nlohmann::json HarbourUtils::FileManager::loadConfigFile(const std::filesystem::path &path)
+nlohmann::json HarbourUtils::FileManager::loadConfigFile(const fs::path &path)
 {
     try
     {
@@ -60,7 +59,7 @@ nlohmann::json HarbourUtils::FileManager::loadConfigFile(const std::filesystem::
     return {};
 }
 
-bool HarbourUtils::FileManager::fileExists(const std::filesystem::path &path)
+bool HarbourUtils::FileManager::fileExists(const fs::path &path)
 {
     if (fs::exists(path) && fs::is_regular_file(path))
     {
@@ -72,7 +71,23 @@ bool HarbourUtils::FileManager::fileExists(const std::filesystem::path &path)
     }
 }
 
-bool HarbourUtils::FileManager::unzipArchive(const std::filesystem::path &path, const std::string &destination)
+bool HarbourUtils::FileManager::directoryExists(const fs::path &path, bool createIfMissing)
+{
+    if (fs::exists(path) && fs::is_directory(path))
+    {
+        return true;
+    }
+    else
+    {
+        if (createIfMissing)
+        {
+            fs::create_directories(path);
+        }
+        return false;
+    }
+}
+
+bool HarbourUtils::FileManager::unzipArchive(const fs::path &path, const fs::path &destination)
 {
     // Placeholder implementation
     // Use libarchive

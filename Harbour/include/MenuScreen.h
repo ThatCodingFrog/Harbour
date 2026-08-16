@@ -13,6 +13,12 @@ namespace HarbourGUI
 		HelpCenter,
 	};
 
+	enum RenderStates
+	{
+		Grid,
+		List
+	};
+
 	void MyLibraryScreen(std::vector<Harbour::GameCard> &myLibrary);
 	void downloadsScreen(std::vector<Harbour::GameCard> &downloads);
 	void settingsScreen();

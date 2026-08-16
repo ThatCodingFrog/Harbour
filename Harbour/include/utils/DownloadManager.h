@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
-#include <vector>
+
+#include <mutex>
+#include <atomic>
+#include <deque>
 
 namespace HarbourUtils
 {
@@ -8,7 +11,6 @@ namespace HarbourUtils
 	{
 		std::string url;
 		std::string name;
-		float progress = 0.0f;
 	};
 
 	class DownloadManager
@@ -17,10 +19,14 @@ namespace HarbourUtils
 		DownloadManager();
 		~DownloadManager();
 
-		void addDownload(); // determine params later
-		void updateDownloads();
+		void addDownload(std::string url, std::string name); // determine params later
+		double getCurrentDownloadProgress();
 
 	private:
-		std::vector<DownloadTask> m_downloads;
+		void startDownload(DownloadTask &task);
+
+		std::mutex m_downloadLock;
+		std::deque<DownloadTask> m_downloads;
+		std::atomic<double> m_currentDownloadProgress = 0.0;
 	};
 }

@@ -7,6 +7,7 @@ void HarbourGUI::MyLibraryScreen(std::vector<Harbour::GameCard> &myLibrary)
 	ImGui::PushFont(NULL, 24.0f);
 	ImGui::Text("My Library");
 
+	HarbourGUI::RenderStates renderState = Grid;
 	if (myLibrary.size() > 0)
 	{
 		for (size_t i = 0; i < myLibrary.size(); i++)
@@ -36,6 +37,7 @@ void HarbourGUI::downloadsScreen(std::vector<Harbour::GameCard> &downloads)
 
 	// Placeholder for a search bar
 
+	HarbourGUI::RenderStates renderState = Grid;
 	ImGui::Indent(20.0f);
 	if (ImGui::BeginTable("Downloads", columns, ImGuiTableFlags_SizingStretchSame | ImGuiTableFlags_PadOuterX))
 	{

@@ -4,6 +4,8 @@
 #include "GameCard.h"
 #include <filesystem>
 
+namespace fs = std::filesystem;
+
 namespace HarbourUtils
 {
 	class FileManager
@@ -14,11 +16,12 @@ namespace HarbourUtils
 
 		FileManager *get();
 
-		void saveConfigFile(const nlohmann::json &config, const std::string &path);
-		nlohmann::json loadConfigFile(const std::filesystem::path &path);
+		void saveConfigFile(const nlohmann::json &config, const fs::path &path);
+		nlohmann::json loadConfigFile(const fs::path &path);
 
-		bool fileExists(const std::filesystem::path &path);
+		bool fileExists(const fs::path &path);
+		bool directoryExists(const fs::path &path, bool createIfMissing);
 
-		bool unzipArchive(const std::filesystem::path &path, const std::string &destination);
+		bool unzipArchive(const fs::path &path, const fs::path &destination);
 	};
 }

@@ -19,7 +19,7 @@ namespace Harbour
 
 		void setName(std::string name);
 		void setVersion(std::string version);
-		void setFilePath();
+		void setFilePath(std::string path);
 		void setThumbnailImg(std::string path);
 
 	private:
@@ -28,6 +28,8 @@ namespace Harbour
 		std::string m_name = "";
 		std::string m_version = "";
 		std::string m_thumbnailFilePath = "";
+		std::string m_executablePath = "";
+		bool m_owned = false;
 
 		GLuint m_texture = 0;
 	};

@@ -34,8 +34,9 @@ void Harbour::GameCard::setVersion(std::string version)
 	m_version = version;
 }
 
-void Harbour::GameCard::setFilePath()
+void Harbour::GameCard::setFilePath(std::string path)
 {
+	m_executablePath = path;
 }
 
 void Harbour::GameCard::setThumbnailImg(std::string path)
@@ -54,7 +55,7 @@ std::string Harbour::GameCard::getVersion()
 
 void Harbour::GameCard::draw()
 {
-	ImGui::SetNextWindowSize(ImVec2(300, 300));
+	ImGui::SetNextWindowSize(ImVec2(300, 350));
 	ImGui::BeginChild(m_name.c_str(), ImVec2(0, 0),
 					  ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY | ImGuiChildFlags_Border,
 					  ImGuiWindowFlags_NoMove);
@@ -65,6 +66,16 @@ void Harbour::GameCard::draw()
 	ImGui::PushFont(NULL, 16.0f);
 	ImGui::Text(m_version.c_str());
 	ImGui::PopFont();
+
+	if (ImGui::Button("Details"))
+	{
+	}
+
+	ImGui::SameLine();
+
+	if (ImGui::Button(m_owned ? "Play" : "Download"))
+	{
+	}
 
 	ImGui::EndChild();
 }
