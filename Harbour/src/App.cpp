@@ -33,7 +33,19 @@ Harbour::App::~App()
 
 void Harbour::App::init()
 {
-    SDL_Init(SDL_INIT_VIDEO);
+
+    if (!SDL_Init(SDL_INIT_VIDEO))
+    {
+        std::cout << "Fatal error in starting SDL_Video, exiting..." << std::endl;
+        return;
+    }
+#ifdef __APPLE__
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_FORWARD_COMPATIBLE_FLAG); // Always required on Mac
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+#endif
+
     m_window = SDL_CreateWindow("Harbour Ports",
                                 1280, 720, SDL_WINDOW_OPENGL); // Allow SDL_WINDOW_RESIZABLE?
 
@@ -44,7 +56,9 @@ void Harbour::App::init()
     ImGui::CreateContext();
 
     ImGuiIO &io = ImGui::GetIO();
-    io.Fonts->AddFontFromFileTTF("./assets/Fonts/montserrat/Montserrat-Regular.otf", 16.0f);
+    ImFont *font = io.Fonts->AddFontFromFileTTF("assets/Fonts/montserrat/Montserrat-Regular.otf", 16.0f);
+    if (font == nullptr)
+        io.Fonts->AddFontDefault();
 
     ImGui_ImplSDL3_InitForOpenGL(m_window, gl_context);
     ImGui_ImplOpenGL3_Init("#version 150");
