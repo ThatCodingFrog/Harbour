@@ -40,11 +40,14 @@ Harbour::GameCard HarbourUtils::LibraryManager::makeEntry(nlohmann::json entry)
         card.setVersion(version);
         std::filesystem::path thumbnailPath = "assets/GameCard/" + entry["thumbnail"].get<std::string>();
         if (this->m_fileManager->fileExists(thumbnailPath))
-            card.setThumbnailImg(thumbnailPath.string());
+        {
+            const std::string stringPath = thumbnailPath.string();
+            card.setThumbnailImg(stringPath);
+        }
         else
         {
-            card.setThumbnailImg("assets/GameCard/UnknownTitle.png");
-            // Make request, get img
+            // card.setThumbnailImg("assets/GameCard/UnknownTitle.png");
+            //  Make request, get img
         }
         return card;
     }

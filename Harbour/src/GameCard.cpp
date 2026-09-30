@@ -3,10 +3,6 @@
 
 Harbour::GameCard::GameCard()
 {
-	std::cout << "A new Game Card was created!" << std::endl;
-	this->setName("Unknown Card");
-	this->setVersion("1.0.0");
-	this->setThumbnailImg("assets/GameCard/UnknownTitle.png");
 }
 
 Harbour::GameCard::GameCard(std::string name, std::string version)
@@ -24,48 +20,53 @@ Harbour::GameCard::~GameCard()
 	}
 }
 
-void Harbour::GameCard::setName(std::string name)
+void Harbour::GameCard::setName(const std::string &name)
 {
 	m_name = name;
 }
 
-void Harbour::GameCard::setVersion(std::string version)
+void Harbour::GameCard::setVersion(const std::string &version)
 {
 	m_version = version;
 }
 
-void Harbour::GameCard::setFilePath(std::string path)
+void Harbour::GameCard::setLongDesc(const std::string &desc)
+{
+	m_longDesc = desc;
+}
+
+void Harbour::GameCard::setFilePath(const std::string &path)
 {
 	m_executablePath = path;
 }
 
-void Harbour::GameCard::setThumbnailImg(std::string path)
+void Harbour::GameCard::setThumbnailImg(const std::string &path)
 {
 	m_thumbnailFilePath = path;
 }
 
-std::string Harbour::GameCard::getName()
+bool Harbour::GameCard::startGame()
 {
-	return m_name;
-}
-std::string Harbour::GameCard::getVersion()
-{
-	return m_version;
+	// Platform-specific
+	// Launch process based on m_executablePath
+	return false;
 }
 
 void Harbour::GameCard::draw()
 {
-	ImGui::SetNextWindowSize(ImVec2(300, 350));
+	ImGui::SetNextWindowSize(m_size);
 	ImGui::BeginChild(m_name.c_str(), ImVec2(0, 0),
 					  ImGuiChildFlags_ResizeX | ImGuiChildFlags_ResizeY | ImGuiChildFlags_Border,
 					  ImGuiWindowFlags_NoMove);
 
 	this->drawThumbnail();
-	ImGui::Text(m_name.c_str());
+	ImGui::Text("%s", m_name.c_str());
 	ImGui::SameLine();
 	ImGui::PushFont(NULL, 16.0f);
-	ImGui::Text(m_version.c_str());
+	ImGui::Text("%s", m_version.c_str());
 	ImGui::PopFont();
+
+	ImGui::Separator();
 
 	if (ImGui::Button("Details"))
 	{
@@ -90,6 +91,9 @@ void Harbour::GameCard::drawThumbnail()
 		bool ret = LoadTextureFromFile(m_thumbnailFilePath.c_str(), &m_texture, &my_image_width, &my_image_height);
 		IM_ASSERT(ret);
 	}
+
+	float widthOffset = ImGui::GetCursorPosX() + (m_size.x - m_thumbnailSize.x) / 2;
+	ImGui::SetCursorPos(ImVec2(widthOffset, ImGui::GetCursorPosY()));
 
 	ImGui::Image((ImTextureID)(intptr_t)m_texture, ImVec2(256, 256)); // ImVec2(my_image_width, my_image_height)
 }
