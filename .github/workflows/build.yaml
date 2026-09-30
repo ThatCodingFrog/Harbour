@@ -1,0 +1,116 @@
+name: Build Harbour Ports
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-latest, windows-latest, macos-latest]
+        include:
+          - os: ubuntu-latest
+            triplet: x64-linux
+          - os: windows-latest
+            triplet: x64-windows
+          - os: macos-latest
+            triplet: x64-osx
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+
+      - name: Set up development environment (Ubuntu)
+        if: runner.os == 'Linux'
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            autoconf \
+            autoconf-archive \
+            automake \
+            libtool \
+            libltdl-dev \
+            build-essential \
+            cmake \
+            git \
+            curl \
+            zip \
+            unzip \
+            tar \
+            pkg-config \
+            libssl-dev \
+            libx11-dev \
+            libgl1-mesa-dev
+
+      - name: Set up development environment (macOS)
+        if: runner.os == 'macOS'
+        run: |
+          brew install cmake git curl
+
+      - name: Set up development environment (Windows)
+        if: runner.os == 'Windows'
+        run: |
+          choco install cmake --version=3.16.0 -y
+          choco install git curl -y
+
+      - name: Verify CMake version
+        run: cmake --version
+
+      - name: Cache vcpkg
+        uses: actions/cache@v5
+        with:
+          path: vcpkg
+          key: vcpkg-${{ runner.os }}-${{ hashFiles('vcpkg.json') }}
+          restore-keys: |
+            vcpkg-${{ runner.os }}-
+
+      - name: Clone vcpkg
+        run: |
+          if [ ! -d "vcpkg" ]; then
+            git clone https://github.com/Microsoft/vcpkg.git
+          fi
+        shell: bash
+
+      - name: Bootstrap vcpkg (Unix)
+        if: runner.os != 'Windows'
+        run: ./vcpkg/bootstrap-vcpkg.sh
+
+      - name: Bootstrap vcpkg (Windows)
+        if: runner.os == 'Windows'
+        run: .\vcpkg\bootstrap-vcpkg.bat
+
+      - name: Install vcpkg dependencies
+        run: ./vcpkg/vcpkg install --triplet=${{ matrix.triplet }}
+        shell: bash
+        env:
+          VCPKG_ROOT: ${{ github.workspace }}/vcpkg
+
+      - name: Create build directory
+        run: mkdir -p build
+
+      - name: Configure CMake
+        run: |
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            "-DCMAKE_TOOLCHAIN_FILE=${{ github.workspace }}/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        shell: bash
+
+      - name: Build
+        run: cmake --build build --config Release
+
+      - name: Run tests (optional)
+        run: ctest --build-config Release
+        working-directory: build
+        continue-on-error: true
+
+      - name: Upload build artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-${{ matrix.os }}-${{ matrix.triplet }}
+          path: build/
+          retention-days: 30
