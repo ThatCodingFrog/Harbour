@@ -36,6 +36,10 @@ target_link_libraries(imgui PRIVATE freetype)
 
 target_link_libraries(Harbour PRIVATE SDL3::SDL3 glad::glad LibArchive::LibArchive)
 
+if(APPLE)
+    target_link_libraries(Harbour PRIVATE "-framework OpenGL")
+endif()
+
 target_link_libraries(Harbour PRIVATE imgui)
 target_link_libraries(Harbour PRIVATE cpr::cpr)
 
