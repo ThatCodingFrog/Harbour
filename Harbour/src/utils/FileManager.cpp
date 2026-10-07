@@ -116,12 +116,11 @@ const fs::path HarbourUtils::resolvePath(const fs::path &path)
         if (realpath(appPath, realPath) != nullptr)
         {
             fs::path resolvedPath(realPath);
-            return resolvedPath.parent_path(); // just the directory the app is actually in
+            return resolvedPath.parent_path() / path; // just the directory the app is actually in
         }
     }
 #endif
     return fs::weakly_canonical(path);
-    // return fs::current_path();
 }
 
 const fs::path HarbourUtils::resolvePath(const std::string &pathStr)

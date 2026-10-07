@@ -47,7 +47,7 @@ void Harbour::App::init()
 #endif
 
     m_window = SDL_CreateWindow("Harbour Ports",
-                                1280, 720, SDL_WINDOW_OPENGL); // Allow SDL_WINDOW_RESIZABLE?
+                                1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE); // Allow SDL_WINDOW_RESIZABLE?
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(m_window);
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);

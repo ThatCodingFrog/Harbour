@@ -17,8 +17,6 @@ namespace HarbourUtils
 		FileManager();
 		~FileManager();
 
-		FileManager *get();
-
 		void saveConfigFile(const nlohmann::json &config, const fs::path &path);
 		nlohmann::json loadConfigFile(const fs::path &path);
 
