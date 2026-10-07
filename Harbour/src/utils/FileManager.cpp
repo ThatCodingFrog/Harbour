@@ -4,6 +4,12 @@
 #include <exception>
 #include <archive.h>
 
+#if defined(__APPLE__)
+#include <mach-o/dyld.h>
+#include <sys/syslimits.h>
+#include <stdlib.h>
+#endif
+
 HarbourUtils::FileManager::FileManager()
 {
     this->directoryExists("cache/downloads", true); // Creates cache/downloads/ folder for downloaded archives to be put in
@@ -14,19 +20,16 @@ HarbourUtils::FileManager::~FileManager()
 {
 }
 
-HarbourUtils::FileManager *HarbourUtils::FileManager::get()
-{
-    return this;
-}
-
 void HarbourUtils::FileManager::saveConfigFile(const nlohmann::json &config, const fs::path &path)
 {
-    if (!path.parent_path().empty() && !fs::exists(path.parent_path()))
+    fs::path rPath = HarbourUtils::resolvePath(path);
+
+    if (!rPath.parent_path().empty() && !fs::exists(rPath.parent_path()))
     {
-        fs::create_directories(path.parent_path());
+        fs::create_directories(rPath.parent_path());
     }
 
-    std::ofstream stream(path, std::ios::out | std::ios::trunc);
+    std::ofstream stream(rPath, std::ios::out | std::ios::trunc);
     if (stream.is_open())
     {
         stream << config.dump(4);
@@ -40,9 +43,10 @@ void HarbourUtils::FileManager::saveConfigFile(const nlohmann::json &config, con
 
 nlohmann::json HarbourUtils::FileManager::loadConfigFile(const fs::path &path)
 {
+    fs::path rPath = HarbourUtils::resolvePath(path);
     try
     {
-        std::ifstream stream(path);
+        std::ifstream stream(rPath);
         if (stream.is_open())
         {
             nlohmann::json config;
@@ -73,7 +77,9 @@ bool HarbourUtils::FileManager::fileExists(const fs::path &path)
 
 bool HarbourUtils::FileManager::directoryExists(const fs::path &path, bool createIfMissing)
 {
-    if (fs::exists(path) && fs::is_directory(path))
+    fs::path rPath = HarbourUtils::resolvePath(path);
+
+    if (fs::exists(rPath) && fs::is_directory(rPath))
     {
         return true;
     }
@@ -81,7 +87,8 @@ bool HarbourUtils::FileManager::directoryExists(const fs::path &path, bool creat
     {
         if (createIfMissing)
         {
-            fs::create_directories(path);
+            fs::create_directories(rPath);
+            return true;
         }
         return false;
     }
@@ -94,6 +101,35 @@ bool HarbourUtils::FileManager::unzipArchive(const fs::path &path, const fs::pat
     struct archive *a;
 
     return true;
+}
+
+const fs::path HarbourUtils::resolvePath(const fs::path &path)
+{
+    // Assisted by Gemini 3.1 Pro Extended because I am still learning macOS specific fixes
+#if defined(__APPLE__)
+    char appPath[PATH_MAX];
+    uint32_t size = sizeof(appPath);
+
+    if (_NSGetExecutablePath(appPath, &size) == 0)
+    {
+        char realPath[PATH_MAX];
+        if (realpath(appPath, realPath) != nullptr)
+        {
+            fs::path resolvedPath(realPath);
+            return resolvedPath.parent_path(); // just the directory the app is actually in
+        }
+    }
+#endif
+    return fs::weakly_canonical(path);
+    // return fs::current_path();
+}
+
+const fs::path HarbourUtils::resolvePath(const std::string &pathStr)
+{
+
+    fs::path path = fs::path(pathStr);
+    fs::path resolvedPath = resolvePath(path);
+    return resolvedPath;
 }
 
 /**

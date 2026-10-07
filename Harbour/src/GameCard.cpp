@@ -1,5 +1,6 @@
 #include "GameCard.h"
 #include <iostream>
+#include "utils/FileManager.h"
 
 Harbour::GameCard::GameCard()
 {
@@ -42,7 +43,8 @@ void Harbour::GameCard::setFilePath(const std::string &path)
 
 void Harbour::GameCard::setThumbnailImg(const std::string &path)
 {
-	m_thumbnailFilePath = path;
+	auto rPath = HarbourUtils::resolvePath(path);
+	m_thumbnailFilePath = rPath.string();
 }
 
 bool Harbour::GameCard::startGame()
