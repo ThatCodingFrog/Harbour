@@ -1,28 +1,84 @@
-# Building Harbour of Harkinian
+# Building Harbour Ports
 
-## Prerequisites
+## Prerequisites on all platforms
 - C++ compiler
 - Git
 - CMake
+- vcpkg
 
 ## Windows
 
-Powershell instructions
+- Configure CMake (should automatically install vcpkg dependencies)
+    - I usually use Ninja for configuring, if you want to do that just add `-G Ninja` to the command
+    - _(if vcpkg dependencies do not automatically download, run vcpkg install in your project root, then delete the build folder and reconfigure)_
 
+```powershell
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="/path/to/vcpkg/scripts/buildsystems/vcpkg.cmake"
 ```
-# When cloning, be sure to set the --recursive flag for submodule dependencies
+    
 
-# In the root folder, i.e. Harbour/, run:
+- Build Harbour Ports
+```powershell
+cmake --build build
+```
+- The executable will be found at `build/Harbour.exe`
 
-cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="external/vcpkg/scripts/buildsystems/vcpkg.cmake"
+## Linux
+- Ensure all dependencies are installed (Ubuntu)
+```bash
+sudo apt-get install -y \
+            autoconf \
+            autoconf-archive \
+            automake \
+            libtool \
+            libltdl-dev \
+            build-essential \
+            curl \
+            zip \
+            unzip \
+            tar \
+            pkg-config \
+            libssl-dev \
+            libx11-dev \
+            libgl1-mesa-dev
+```
+- Ensure vcpkg dependencies are installed
+```bash
+./path/to/vcpkg install
+```
 
-# Then to build a debug build, run
+- Configure CMake
+```bash
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="path/to/vcpkg/scripts/buildsystems/vcpkg.cmake"
+```
+
+- Build Harbour Ports
+```bash
+cmake --build build
+```
+- The executable will be found at `build/Harbour`
+
+
+## macOS
+_note: documentation is still undergoing for macOS_
+- Ensure cURL is installed
+```
+brew install curl
+```
+
+- Ensure vcpkg dependencies are installed
+```
+./path/to/vcpkg install
+```
+
+- Configure CMake
+```
+cmake -S . -B build -DCMAKE_TOOLCHAIN_FILE="path/to/vcpkg/scripts/buildsystems/vcpkg.cmake"
+```
+
+- Build Harbour Ports
+```
 cmake --build build
 ```
 
-## Linux
-I only did a Linux build once, and in Github Codespaces, and even then I was unable to test it fully.
-If someone else has a real Linux machine (or a fuller VM than GH Codespaces) and could test build this, that would be great.
-
-## MacOS
-Currently unknown, documentation will be added when verified.
+For additional help, please refer to the [workflow](../.github/workflows/build.yaml) and the section for your specific platform.
