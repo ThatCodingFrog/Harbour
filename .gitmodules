@@ -1,3 +1,0 @@
-[submodule "external/11Zip/extlibs/minizip"]
-	path = external/11Zip/extlibs/minizip
-	url = https://github.com/zlib-ng/minizip-ng.git
