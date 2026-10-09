@@ -58,8 +58,6 @@ void Harbour::App::init()
     ImGuiIO &io = ImGui::GetIO();
     auto fontFilePath = HarbourUtils::resolvePath(L"assets/Fonts/montserrat/Montserrat-Regular.otf");
 
-    std::cout << fontFilePath << std::endl;
-
     ImFont *font = io.Fonts->AddFontFromFileTTF(fontFilePath.string().c_str(), 16.0f);
     if (font == nullptr)
         io.Fonts->AddFontDefault();
@@ -187,7 +185,6 @@ void Harbour::App::drawSplashScreen()
     {
         int width = 0, height = 0;
         auto filepath = HarbourUtils::resolvePath(L"assets/GameCard/UnknownTitle.png");
-        std::cout << filepath << std::endl;
         LoadTextureFromFile(filepath.string().c_str(), &m_splashImg, &width, &height);
     }
 
@@ -238,16 +235,11 @@ std::string Harbour::App::updateMessage()
 
 void Harbour::App::initAppClasses()
 {
-    std::cout << "Thread started" << std::endl;
     m_fileManager = std::make_unique<HarbourUtils::FileManager>();
-    std::cout << "FileManager" << std::endl;
     m_networkManager = std::make_unique<HarbourUtils::NetworkManager>(m_fileManager.get());
-    std::cout << "NetworkManager" << std::endl;
     m_libraryManager = std::make_unique<HarbourUtils::LibraryManager>(m_fileManager.get());
-    std::cout << "LibraryManager" << std::endl;
 
     auto manifestResolvedPath = HarbourUtils::resolvePath(L"cache/manifest.json");
-    std::cout << manifestResolvedPath << std::endl;
     m_allGames = m_libraryManager->constructLibraryFromJSON(manifestResolvedPath.string());
     m_initComplete.store(true);
 }

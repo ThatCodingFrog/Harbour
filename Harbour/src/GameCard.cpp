@@ -11,6 +11,8 @@ Harbour::GameCard::GameCard(std::string name, std::string version)
 	std::cout << "A new Game Card was created!" << std::endl;
 	this->setName(name);
 	this->setVersion(version);
+	auto rThumbnailDefaultPath = HarbourUtils::resolvePath(m_thumbnailFilePath);
+	m_thumbnailFilePath = rThumbnailDefaultPath.string();
 }
 
 Harbour::GameCard::~GameCard()
@@ -38,12 +40,14 @@ void Harbour::GameCard::setLongDesc(const std::string &desc)
 
 void Harbour::GameCard::setFilePath(const std::string &path)
 {
-	m_executablePath = path;
+	auto rPath = HarbourUtils::resolvePath(path);
+	m_executablePath = rPath.string();
 }
 
 void Harbour::GameCard::setThumbnailImg(const std::string &path)
 {
 	auto rPath = HarbourUtils::resolvePath(path);
+	std::cout << "GameCard with name " << m_name << " just had its thumbnail path set to " << rPath << std::endl;
 	m_thumbnailFilePath = rPath.string();
 }
 
@@ -97,5 +101,5 @@ void Harbour::GameCard::drawThumbnail()
 	float widthOffset = ImGui::GetCursorPosX() + (m_size.x - m_thumbnailSize.x) / 2;
 	ImGui::SetCursorPos(ImVec2(widthOffset, ImGui::GetCursorPosY()));
 
-	ImGui::Image((ImTextureID)(intptr_t)m_texture, ImVec2(256, 256)); // ImVec2(my_image_width, my_image_height)
+	ImGui::Image((ImTextureID)(intptr_t)m_texture, m_thumbnailSize); // ImVec2(my_image_width, my_image_height)
 }

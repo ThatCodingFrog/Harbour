@@ -1,14 +1,15 @@
 #define STB_IMAGE_IMPLEMENTATION
 
 #include "utils/LoadImage.h"
+#include <iostream>
 
 // Simple helper function to load an image into a OpenGL texture with common settings
-bool LoadTextureFromMemory(const void* data, size_t data_size, GLuint* out_texture, int* out_width, int* out_height)
+bool LoadTextureFromMemory(const void *data, size_t data_size, GLuint *out_texture, int *out_width, int *out_height)
 {
     // Load from file
     int image_width = 0;
     int image_height = 0;
-    unsigned char* image_data = stbi_load_from_memory((const unsigned char*)data, (int)data_size, &image_width, &image_height, NULL, 4);
+    unsigned char *image_data = stbi_load_from_memory((const unsigned char *)data, (int)data_size, &image_width, &image_height, NULL, 4);
     if (image_data == NULL)
         return false;
 
@@ -17,6 +18,7 @@ bool LoadTextureFromMemory(const void* data, size_t data_size, GLuint* out_textu
     glGenTextures(1, &image_texture);
     glBindTexture(GL_TEXTURE_2D, image_texture);
 
+    std::cout << "[LoadTextureFromMemory] GLUint for this image is: " << image_texture << std::endl;
     // Setup filtering parameters for display
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -34,20 +36,30 @@ bool LoadTextureFromMemory(const void* data, size_t data_size, GLuint* out_textu
 }
 
 // Open and read a file, then forward to LoadTextureFromMemory()
-bool LoadTextureFromFile(const char* file_name, GLuint* out_texture, int* out_width, int* out_height)
+bool LoadTextureFromFile(const char *file_name, GLuint *out_texture, int *out_width, int *out_height)
 {
-    FILE* f = fopen(file_name, "rb");
+    FILE *f = fopen(file_name, "rb");
+    std::cout << "Opening image file at: " << file_name << std::endl;
+
     if (f == NULL)
+    {
+        std::cout << "f is NULL" << std::endl;
         return false;
+    }
+
     fseek(f, 0, SEEK_END);
     size_t file_size = (size_t)ftell(f);
     if (file_size == -1)
         return false;
     fseek(f, 0, SEEK_SET);
-    void* file_data = IM_ALLOC(file_size);
+    void *file_data = IM_ALLOC(file_size);
     fread(file_data, 1, file_size, f);
     fclose(f);
+    std::cout << "File " << file_name << " was successfully read and closed" << std::endl;
+
     bool ret = LoadTextureFromMemory(file_data, file_size, out_texture, out_width, out_height);
+
+    std::cout << "LoadTextureFromMemory succeeded" << std::endl;
     IM_FREE(file_data);
     return ret;
 }
