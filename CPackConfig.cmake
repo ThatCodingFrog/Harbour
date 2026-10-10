@@ -25,6 +25,10 @@ if(WIN32)
         POST_EXCLUDE_REGEXES ".*system32/.*\\.dll"
     )
     set(CPACK_GENERATOR "ZIP")
+else()
+    set(CPACK_GENERATOR "ZIP")
 endif()
+
+
 
 include(CPack)

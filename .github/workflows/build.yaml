@@ -111,6 +111,10 @@ jobs:
         working-directory: build
         continue-on-error: true
 
+      - name: Package with CPack
+        run: |
+          cd build && cpack
+
       - name: Upload build artifacts
         if: always()
         uses: actions/upload-artifact@v7
