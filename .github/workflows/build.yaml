@@ -119,6 +119,6 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: Harbour-${{ matrix.os }}
-          path: build/Harbour-Ports-*.zip
+          path: ./build/Harbour-Ports-*.zip
+          archive: false
           retention-days: 30
