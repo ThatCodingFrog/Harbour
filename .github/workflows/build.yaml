@@ -111,10 +111,14 @@ jobs:
         working-directory: build
         continue-on-error: true
 
+      - name: Package with CPack
+        run: |
+          cd build && cpack
+
       - name: Upload build artifacts
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: build-${{ matrix.os }}-${{ matrix.triplet }}
-          path: build/
+          path: ./build/Harbour-Ports-*.zip
+          archive: false
           retention-days: 30
