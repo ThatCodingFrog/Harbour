@@ -37,6 +37,8 @@ namespace Harbour
 
 	private:
 		GLuint m_texture = 0;
+		bool m_textureNeedsUpdate = true;
+
 		ImVec2 m_size = {300, 350};
 		ImVec2 m_thumbnailSize = {256, 256};
 	};

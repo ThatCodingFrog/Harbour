@@ -14,8 +14,10 @@ bool LoadTextureFromMemory(const void *data, size_t data_size, GLuint *out_textu
         return false;
 
     // Create a OpenGL texture identifier
-    GLuint image_texture;
-    glGenTextures(1, &image_texture);
+    GLuint image_texture = (out_texture != nullptr) ? *out_texture : 0;
+    if (image_texture == 0)
+        glGenTextures(1, &image_texture); // only generate if it's never been generated before
+
     glBindTexture(GL_TEXTURE_2D, image_texture);
 
     std::cout << "[LoadTextureFromMemory] GLUint for this image is: " << image_texture << std::endl;
