@@ -4,6 +4,7 @@
 
 Harbour::GameCard::GameCard()
 {
+	this->setThumbnailImg("assets/GameCard/UnknownTitle.png");
 }
 
 Harbour::GameCard::GameCard(std::string name, std::string version)
@@ -11,8 +12,7 @@ Harbour::GameCard::GameCard(std::string name, std::string version)
 	std::cout << "A new Game Card was created!" << std::endl;
 	this->setName(name);
 	this->setVersion(version);
-	auto rThumbnailDefaultPath = HarbourUtils::resolvePath(m_thumbnailFilePath);
-	m_thumbnailFilePath = rThumbnailDefaultPath.string();
+	this->setThumbnailImg("assets/GameCard/UnknownTitle.png");
 }
 
 Harbour::GameCard::~GameCard()
@@ -89,7 +89,7 @@ void Harbour::GameCard::draw()
 
 void Harbour::GameCard::drawThumbnail()
 {
-	if (!m_texture)
+	if (!m_texture && !m_thumbnailFilePath.empty())
 	{
 		// From ImGui docs by ocornut
 		int my_image_width = 0;

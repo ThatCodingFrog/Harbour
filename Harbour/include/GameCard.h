@@ -31,7 +31,7 @@ namespace Harbour
 
 		std::string m_longDesc = "";
 
-		std::string m_thumbnailFilePath = "assets/GameCard/UnknownTitle.png";
+		std::string m_thumbnailFilePath = "";
 		std::string m_executablePath = "";
 		bool m_owned = false;
 
