@@ -47,7 +47,7 @@ void Harbour::GameCard::setFilePath(const std::string &path)
 void Harbour::GameCard::setThumbnailImg(const std::string &path)
 {
 	auto rPath = HarbourUtils::resolvePath(path);
-	std::cout << "GameCard with name " << m_name << " just had its thumbnail path set to " << rPath << std::endl;
+	std::cout << "GameCard with name " << m_name << " just had its thumbnail path set to " << rPath << "when m_texture was: " << m_texture << std::endl;
 	m_thumbnailFilePath = rPath.string();
 	m_textureNeedsUpdate = true;
 }
@@ -97,7 +97,8 @@ void Harbour::GameCard::drawThumbnail()
 		int my_image_height = 0;
 		bool ret = LoadTextureFromFile(m_thumbnailFilePath.c_str(), &m_texture, &my_image_width, &my_image_height);
 		IM_ASSERT(ret);
-		m_textureNeedsUpdate = false;
+		if (ret)
+			m_textureNeedsUpdate = false;
 	}
 
 	float widthOffset = ImGui::GetCursorPosX() + (m_size.x - m_thumbnailSize.x) / 2;
