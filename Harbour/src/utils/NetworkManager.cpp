@@ -25,7 +25,8 @@ HarbourUtils::NetworkManager *HarbourUtils::NetworkManager::get()
 
 void HarbourUtils::NetworkManager::checkForManifestUpdate()
 {
-    nlohmann::json etags = m_fileManager->loadConfigFile("cache/etags.json");
+    auto cachePath = HarbourUtils::resolvePath(L"cache/etags.json");
+    nlohmann::json etags = m_fileManager->loadConfigFile(cachePath);
 
     cpr::Header headers = {
         {"Expect", ""}};
@@ -53,12 +54,12 @@ void HarbourUtils::NetworkManager::checkForManifestUpdate()
     if (!manifestETag.empty())
     {
         etags["manifest"] = manifestETag;
-        m_fileManager->saveConfigFile(etags, "cache/etags.json");
+        m_fileManager->saveConfigFile(etags, cachePath);
     }
 
     nlohmann::json manifest = nlohmann::json::parse(r.text);
 
-    m_fileManager->saveConfigFile(manifest, "cache/manifest.json");
+    m_fileManager->saveConfigFile(manifest, HarbourUtils::resolvePath(L"cache/manifest.json"));
 }
 
 void HarbourUtils::NetworkManager::checkForSelfUpdate()

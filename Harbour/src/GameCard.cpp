@@ -1,8 +1,10 @@
 #include "GameCard.h"
 #include <iostream>
+#include "utils/FileManager.h"
 
 Harbour::GameCard::GameCard()
 {
+	this->setThumbnailImg("assets/GameCard/UnknownTitle.png");
 }
 
 Harbour::GameCard::GameCard(std::string name, std::string version)
@@ -10,6 +12,7 @@ Harbour::GameCard::GameCard(std::string name, std::string version)
 	std::cout << "A new Game Card was created!" << std::endl;
 	this->setName(name);
 	this->setVersion(version);
+	this->setThumbnailImg("assets/GameCard/UnknownTitle.png");
 }
 
 Harbour::GameCard::~GameCard()
@@ -37,12 +40,16 @@ void Harbour::GameCard::setLongDesc(const std::string &desc)
 
 void Harbour::GameCard::setFilePath(const std::string &path)
 {
-	m_executablePath = path;
+	auto rPath = HarbourUtils::resolvePath(path);
+	m_executablePath = rPath.string();
 }
 
 void Harbour::GameCard::setThumbnailImg(const std::string &path)
 {
-	m_thumbnailFilePath = path;
+	auto rPath = HarbourUtils::resolvePath(path);
+	std::cout << "GameCard with name " << m_name << " just had its thumbnail path set to " << rPath << "when m_texture was: " << m_texture << std::endl;
+	m_thumbnailFilePath = rPath.string();
+	m_textureNeedsUpdate = true;
 }
 
 bool Harbour::GameCard::startGame()
@@ -83,17 +90,19 @@ void Harbour::GameCard::draw()
 
 void Harbour::GameCard::drawThumbnail()
 {
-	if (!m_texture)
+	if (m_textureNeedsUpdate)
 	{
 		// From ImGui docs by ocornut
 		int my_image_width = 0;
 		int my_image_height = 0;
 		bool ret = LoadTextureFromFile(m_thumbnailFilePath.c_str(), &m_texture, &my_image_width, &my_image_height);
 		IM_ASSERT(ret);
+		if (ret)
+			m_textureNeedsUpdate = false;
 	}
 
 	float widthOffset = ImGui::GetCursorPosX() + (m_size.x - m_thumbnailSize.x) / 2;
 	ImGui::SetCursorPos(ImVec2(widthOffset, ImGui::GetCursorPosY()));
 
-	ImGui::Image((ImTextureID)(intptr_t)m_texture, ImVec2(256, 256)); // ImVec2(my_image_width, my_image_height)
+	ImGui::Image((ImTextureID)(intptr_t)m_texture, m_thumbnailSize); // ImVec2(my_image_width, my_image_height)
 }

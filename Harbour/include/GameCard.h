@@ -31,12 +31,14 @@ namespace Harbour
 
 		std::string m_longDesc = "";
 
-		std::string m_thumbnailFilePath = "assets/GameCard/UnknownTitle.png";
+		std::string m_thumbnailFilePath = "";
 		std::string m_executablePath = "";
 		bool m_owned = false;
 
 	private:
 		GLuint m_texture = 0;
+		bool m_textureNeedsUpdate = true;
+
 		ImVec2 m_size = {300, 350};
 		ImVec2 m_thumbnailSize = {256, 256};
 	};

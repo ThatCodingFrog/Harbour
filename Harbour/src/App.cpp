@@ -47,7 +47,7 @@ void Harbour::App::init()
 #endif
 
     m_window = SDL_CreateWindow("Harbour Ports",
-                                1280, 720, SDL_WINDOW_OPENGL); // Allow SDL_WINDOW_RESIZABLE?
+                                1280, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE); // Allow SDL_WINDOW_RESIZABLE?
 
     SDL_GLContext gl_context = SDL_GL_CreateContext(m_window);
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
@@ -56,7 +56,9 @@ void Harbour::App::init()
     ImGui::CreateContext();
 
     ImGuiIO &io = ImGui::GetIO();
-    ImFont *font = io.Fonts->AddFontFromFileTTF("assets/Fonts/montserrat/Montserrat-Regular.otf", 16.0f);
+    auto fontFilePath = HarbourUtils::resolvePath(L"assets/Fonts/montserrat/Montserrat-Regular.otf");
+
+    ImFont *font = io.Fonts->AddFontFromFileTTF(fontFilePath.string().c_str(), 16.0f);
     if (font == nullptr)
         io.Fonts->AddFontDefault();
 
@@ -182,7 +184,8 @@ void Harbour::App::drawSplashScreen()
     if (!m_splashImg)
     {
         int width = 0, height = 0;
-        LoadTextureFromFile("assets/GameCard/UnknownTitle.png", &m_splashImg, &width, &height);
+        auto filepath = HarbourUtils::resolvePath(L"assets/GameCard/UnknownTitle.png");
+        LoadTextureFromFile(filepath.string().c_str(), &m_splashImg, &width, &height);
     }
 
     ImGui::Image((ImTextureID)(intptr_t)m_splashImg, ImVec2(256, 256));
@@ -236,6 +239,7 @@ void Harbour::App::initAppClasses()
     m_networkManager = std::make_unique<HarbourUtils::NetworkManager>(m_fileManager.get());
     m_libraryManager = std::make_unique<HarbourUtils::LibraryManager>(m_fileManager.get());
 
-    m_allGames = m_libraryManager->constructLibraryFromJSON("cache/manifest.json");
+    auto manifestResolvedPath = HarbourUtils::resolvePath(L"cache/manifest.json");
+    m_allGames = m_libraryManager->constructLibraryFromJSON(manifestResolvedPath.string());
     m_initComplete.store(true);
 }
