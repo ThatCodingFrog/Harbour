@@ -12,6 +12,7 @@ find_package(freetype CONFIG REQUIRED)
 find_package(LibArchive REQUIRED)
 find_package(cpr REQUIRED)
 
+find_package(OpenGL REQUIRED)
 
 add_executable(Harbour
     Harbour/src/main.cpp
@@ -35,10 +36,7 @@ add_subdirectory(external/imgui)
 target_link_libraries(imgui PRIVATE freetype)
 
 target_link_libraries(Harbour PRIVATE SDL3::SDL3 glad::glad LibArchive::LibArchive)
-
-if(APPLE)
-    target_link_libraries(Harbour PRIVATE "-framework OpenGL")
-endif()
+target_link_libraries(Harbour PRIVATE OpenGL::GL)
 
 target_link_libraries(Harbour PRIVATE imgui)
 target_link_libraries(Harbour PRIVATE cpr::cpr)
