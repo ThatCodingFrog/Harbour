@@ -48,6 +48,7 @@ jobs:
             pkg-config \
             libssl-dev \
             libx11-dev \
+            libegl1-mesa-dev \
             libgl1-mesa-dev
 
       - name: Set up development environment (macOS)
