@@ -49,7 +49,12 @@ jobs:
             libssl-dev \
             libx11-dev \
             libegl1-mesa-dev \
-            libgl1-mesa-dev
+            libgl1-mesa-dev \
+            libxft-dev \
+            libxext-dev \
+            libwayland-dev \
+            libxkbcommon-dev \
+            libibus-1.0-dev
 
       - name: Set up development environment (macOS)
         if: runner.os == 'macOS'
