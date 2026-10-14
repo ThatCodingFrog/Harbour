@@ -67,6 +67,7 @@ void Harbour::GameCard::draw()
 					  ImGuiWindowFlags_NoMove);
 
 	this->drawThumbnail();
+
 	ImGui::Text("%s", m_name.c_str());
 	ImGui::SameLine();
 	ImGui::PushFont(NULL, 16.0f);
@@ -77,12 +78,18 @@ void Harbour::GameCard::draw()
 
 	if (ImGui::Button("Details"))
 	{
+		// draw a popup with details
 	}
 
 	ImGui::SameLine();
 
 	if (ImGui::Button(m_owned ? "Play" : "Download"))
 	{
+		if (m_owned)
+			this->startGame();
+		else
+		{
+		}
 	}
 
 	ImGui::EndChild();
@@ -101,7 +108,7 @@ void Harbour::GameCard::drawThumbnail()
 			m_textureNeedsUpdate = false;
 	}
 
-	float widthOffset = ImGui::GetCursorPosX() + (m_size.x - m_thumbnailSize.x) / 2;
+	float widthOffset = (m_size.x - m_thumbnailSize.x) / 2; // Center the image
 	ImGui::SetCursorPos(ImVec2(widthOffset, ImGui::GetCursorPosY()));
 
 	ImGui::Image((ImTextureID)(intptr_t)m_texture, m_thumbnailSize); // ImVec2(my_image_width, my_image_height)

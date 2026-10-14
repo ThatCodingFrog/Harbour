@@ -4,6 +4,7 @@
 #include <mutex>
 #include <atomic>
 #include <deque>
+#include <cpr/session.h>
 
 namespace HarbourUtils
 {
@@ -28,5 +29,7 @@ namespace HarbourUtils
 		std::mutex m_downloadLock;
 		std::deque<DownloadTask> m_downloads;
 		std::atomic<double> m_currentDownloadProgress = 0.0;
+
+		cpr::AsyncResponse m_downloadFuture;
 	};
 }

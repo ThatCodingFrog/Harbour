@@ -6,6 +6,7 @@
 HarbourUtils::LibraryManager::LibraryManager(HarbourUtils::FileManager *fileManager)
 {
     m_fileManager = fileManager;
+    this->determinePlatform();
 }
 
 HarbourUtils::LibraryManager::~LibraryManager()
@@ -28,6 +29,21 @@ std::vector<Harbour::GameCard> HarbourUtils::LibraryManager::constructLibraryFro
     return library;
 }
 
+void HarbourUtils::LibraryManager::determinePlatform()
+{
+#if defined(_WIN32)
+    m_platform = "windows";
+#elif defined(__APPLE__)
+#if defined(__aarch64__) || defined(__arm64__)
+    m_platform = "macos_arm64";
+#elif defined(__x86_64__)
+    m_platform = "macos_x64";
+#endif // Apple specific values
+#else
+    m_platform = "linux";
+#endif
+}
+
 Harbour::GameCard HarbourUtils::LibraryManager::makeEntry(nlohmann::json entry)
 {
     if (entry.contains("name") && entry.contains("version"))
@@ -38,7 +54,8 @@ Harbour::GameCard HarbourUtils::LibraryManager::makeEntry(nlohmann::json entry)
 
         card.setName(name);
         card.setVersion(version);
-        std::filesystem::path thumbnailPath = "assets/GameCard/" + entry["thumbnail"].get<std::string>();
+        std::filesystem::path _thumbnailPath = "assets/GameCard/" + entry["thumbnail"].get<std::string>();
+        std::filesystem::path thumbnailPath = HarbourUtils::resolvePath(_thumbnailPath);
         if (this->m_fileManager->fileExists(thumbnailPath))
         {
             const std::string stringPath = thumbnailPath.string();

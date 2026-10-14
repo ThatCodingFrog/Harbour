@@ -17,6 +17,10 @@ namespace HarbourUtils
         std::vector<Harbour::GameCard> constructLibraryFromJSON(std::string path);
 
     private:
+        void determinePlatform();
+
+        std::string m_platform = "";
+
         FileManager *m_fileManager = nullptr;
         Harbour::GameCard makeEntry(nlohmann::json entry);
         void recurseJSON(nlohmann::json object, std::vector<Harbour::GameCard> &library);
