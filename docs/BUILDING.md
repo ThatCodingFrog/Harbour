@@ -40,7 +40,13 @@ sudo apt-get install -y \
             pkg-config \
             libssl-dev \
             libx11-dev \
-            libgl1-mesa-dev
+            libegl1-mesa-dev \
+            libgl1-mesa-dev \
+            libxft-dev \
+            libxext-dev \
+            libwayland-dev \
+            libxkbcommon-dev \
+            libibus-1.0-dev
 ```
 - Ensure vcpkg dependencies are installed
 ```bash
