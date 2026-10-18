@@ -13,13 +13,15 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [ubuntu-latest, windows-latest, macos-latest]
+        os: [ubuntu-latest, windows-latest, macos-latest, macos-26-intel]
         include:
           - os: ubuntu-latest
             triplet: x64-linux
           - os: windows-latest
             triplet: x64-windows
           - os: macos-latest
+            triplet: arm64-osx
+          - os: macos-26-intel
             triplet: x64-osx
 
     steps:
