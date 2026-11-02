@@ -16,7 +16,7 @@ add_library(imgui
 target_include_directories(imgui PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}
     ${CMAKE_CURRENT_SOURCE_DIR}/backends
-    ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/SDL2
+    ${VCPKG_INSTALLED_DIR}/${VCPKG_TARGET_TRIPLET}/include/SDL3
 )
 
 

@@ -205,6 +205,8 @@ void Harbour::App::drawFooter()
         ImVec2(vp->Size.x, footerHeight));
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::PushStyleColor(ImGuiCol_FrameBg, ImVec4(0.16f, 0.29f, 0.48f, 1.0f));
+    ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(0, 0, 0, 1.0f));
 
     ImGui::Begin("Footer", nullptr, ImGuiWindowFlags_NoDecoration | ImGuiWindowFlags_NoBackground | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoSavedSettings);
 
@@ -212,6 +214,7 @@ void Harbour::App::drawFooter()
 
     ImGui::End();
 
+    ImGui::PopStyleColor(2);
     ImGui::PopStyleVar();
 }
 
