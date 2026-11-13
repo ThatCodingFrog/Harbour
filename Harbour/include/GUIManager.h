@@ -12,6 +12,7 @@ namespace Harbour
 
     class GUIManager
     {
+public:
         GUIManager();
         ~GUIManager();
 
