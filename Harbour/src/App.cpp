@@ -1,4 +1,5 @@
 #include "App.h"
+#include "GUIManager.h"
 #include <iostream>
 
 #include <glad/glad.h>
@@ -104,7 +105,6 @@ void Harbour::App::run()
         if (ImGui::BeginMenuBar())
         {
             ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0.0f, 0.0f, 0.0f, 0.0f));
-            HarbourGUI::screenID next = {};
             if (ImGui::Button("My Library"))
                 m_screenID = HarbourGUI::MyLibrary;
             if (ImGui::Button("All Games"))
@@ -238,6 +238,7 @@ std::string Harbour::App::updateMessage()
 
 void Harbour::App::initAppClasses()
 {
+    m_guiManager = std::make_unique<Harbour::GUIManager>();
     m_fileManager = std::make_unique<HarbourUtils::FileManager>();
     m_networkManager = std::make_unique<HarbourUtils::NetworkManager>(m_fileManager.get());
     m_libraryManager = std::make_unique<HarbourUtils::LibraryManager>(m_fileManager.get());

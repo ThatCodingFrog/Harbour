@@ -18,8 +18,10 @@ add_executable(Harbour
     Harbour/src/main.cpp
     Harbour/src/App.cpp
     Harbour/src/GameCard.cpp
-    Harbour/src/utils/FileManager.cpp
     Harbour/src/MenuScreen.cpp
+    Harbour/src/GUIManager.cpp
+    
+    Harbour/src/utils/FileManager.cpp
     Harbour/src/utils/LoadImage.cpp
     Harbour/src/utils/NetworkManager.cpp
     Harbour/src/utils/DownloadManager.cpp

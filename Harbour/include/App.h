@@ -20,6 +20,8 @@ namespace HarbourUtils
 
 namespace Harbour
 {
+	class GUIManager;
+
 	class App
 	{
 	public:
@@ -45,6 +47,8 @@ namespace Harbour
 		int m_screenID = 0;
 
 	private:
+		std::unique_ptr<Harbour::GUIManager> m_guiManager;
+
 		std::unique_ptr<HarbourUtils::FileManager> m_fileManager;
 		std::unique_ptr<HarbourUtils::NetworkManager> m_networkManager;
 		std::unique_ptr<HarbourUtils::LibraryManager> m_libraryManager;
